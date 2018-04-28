@@ -11,7 +11,7 @@ void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
   //Solo rellenamos el triángulo superior sin incluir la diagonal principal
   for(it= v.begin(); it != v.end(); it++){
     for(jt= it+1; jt != v.end(); jt++){
-      m[i][j]= distancia_euclidea(*it, *jt);
+      m[i][j]= distancia_euclidea(*it, *jt); //Aqui igual, se solucionaria si haces el constructor por defecto
       j++;
     }
     i++;
@@ -70,8 +70,8 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
   int origen= i;
   set<pair<double, int> > posibilidades;
   vector<int> r;
-  r[0]= i;
-  visitadas[i]= true;
+  r.push_back(i);
+  visitadas[i]= true; //este se solucionaria si haces el constructor por defecto
 
   //Mientras haya ciudades por recorrer
   while(!end()){
