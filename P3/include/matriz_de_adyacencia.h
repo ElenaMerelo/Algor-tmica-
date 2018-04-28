@@ -28,7 +28,7 @@ private:
 
 public:
   //Crea la matriz de adyacencia a partir del fichero pasado como parámetro
-  matriz_de_adyacencia(const char *fichero);
+  matriz_de_adyacencia(ifstream& fichero);
 
   //Obtiene el camino mínimo desde la fila i columna j de la matriz
   vector<int> min_path(int i, double &longitud);

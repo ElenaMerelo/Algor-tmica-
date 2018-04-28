@@ -19,7 +19,7 @@ void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
 }
 
 //Creamos la matriz de adyacencia a partir del fichero pasado como argumento
-matriz_de_adyacencia::matriz_de_adyacencia(const char* fichero){
+matriz_de_adyacencia::matriz_de_adyacencia(ifstream& fichero){
   int num_cities, n;
   double x, y;
   string cabecera;
@@ -48,6 +48,7 @@ matriz_de_adyacencia::matriz_de_adyacencia(const char* fichero){
   }
 
   rellenar_matriz(ciudades);
+  flujo.close();
 }
 
 bool matriz_de_adyacencia::end(){
