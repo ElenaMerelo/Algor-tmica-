@@ -43,8 +43,8 @@ matriz_de_adyacencia::matriz_de_adyacencia(ifstream& fichero){
     flujo >> n;
     flujo >> x;
     flujo >> y;
-    ciudades[i]= make_pair(x ,y);
-    visitadas[i]= false;
+    ciudades.push_back( make_pair(x ,y) );
+    visitadas.push_back( false );
   }
 
   rellenar_matriz(ciudades);
