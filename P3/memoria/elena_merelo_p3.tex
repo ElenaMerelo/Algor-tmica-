@@ -1,0 +1,106 @@
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+\usepackage[hmargin=2cm]{geometry}
+\usepackage{color} 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92} 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+%Para mostrar el código bonito 
+\lstset{language=c++} 
+\lstdefinestyle{customc}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\parindent,
+  language=C,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+
+\lstdefinestyle{customasm}{
+  belowcaptionskip=1\baselineskip,
+  frame=L,
+  xleftmargin=\parindent,
+  language=[x86masm]Assembler,
+  basicstyle=\footnotesize\ttfamily,
+  commentstyle=\itshape\color{purple!40!black},
+}
+
+\lstset{escapechar=@,style=customc}
+\begin{document}
+\begin{titlepage}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\center
+\textsc{\LARGE Universidad de Granada}\\[1.5cm] % Name of your university/college
+\textsc{\Large Algorítmica}\\[0.5cm] % Major heading such as course name
+\HRule \\[0.4cm]
+{ \huge \bfseries Práctica 2: Algoritmo Divide y Vencerás}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Autora:}\\
+Elena Merelo Molina \textsc{} % Your name
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{} \\
+\textsc{} % Supervisor's Name
+\end{flushright}
+\end{minipage}\\[2cm]
+{\large 11 de Abril}\\[2cm] % Date, change the \today to a set date if you want to be precise
+\includegraphics[scale=0.5]{../logo.jpg}
+\vfill % Fill the rest of the page with whitespace
+\end{titlepage}
+
+%\include{parte_teorica}
+
+\section{Objetivo de la práctica}
+
+
+\section{Heurística del vecino más cercano}
+Explicación de min_path: 
+Si quisiera obtener el mínimo camino desde la primera ciudad hasta que no haya
+más ciudades por recorrer. Si empieza por la ciudad 0, entonces chequea en 01, 02 y 03.
+Si empieza por la ciudad 1 ha de chequear 1 0, 1 2 y 1 3. Pero en 1 0 no hay nada, tendría
+que chequear en 0 1, en 1 2 y 1 3 si hay. Ídem con 2: 2 0, 2 1 y 2 3 --> 0 2 1 2 y 2 3.
+Si cada vez que nos dan una ciudad creamos un set con la distancia al resto de las 
+ciudades, éste las colocará de menor a mayor, pero luego no podremos saber cuál 
+es la ciudad que se corresponde con dicha distancia mínima. Por ello creamos un set de pair, considerando una pareja en la que la primera coordenada es la distancia de la ciudad pasada como parámetro al resto de las ciudades, y la segunda es la ciudad con la que se está comparando la primera.
+
+0 2 3 4
+0 0 4 5
+0 0 0 2
+0 0 0 0
+
+\end{document}
