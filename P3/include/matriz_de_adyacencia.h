@@ -6,6 +6,9 @@
 #include <fstream>
 #include <assert.h>
 #include <algorithm>
+#include <math.h>
+#include <set>
+#include <iostream>
 
 using namespace std;
 
@@ -28,7 +31,7 @@ public:
   matriz_de_adyacencia(const char *fichero);
 
   //Obtiene el camino mínimo desde la fila i columna j de la matriz
-  vector<int> min_path(int i, int j, double &longitud);
+  vector<int> min_path(int i, double &longitud);
 };
 
 #endif

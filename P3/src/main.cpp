@@ -9,8 +9,8 @@ int main(int argc, char *argv){
     exit(-1);
   }
 
-  matriz_de_adyacencia m(argv[1]);
-  double longitud;
+  matriz_de_adyacencia m((const char *)argv[1]);
+  double longitud= 0;
   vector<int> camino= m.min_path(0, longitud);
 
   cout << "Recorrido con peso mínimo " << longitud << ": ";

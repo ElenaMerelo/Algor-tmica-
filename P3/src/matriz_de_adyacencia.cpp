@@ -1,7 +1,7 @@
 #include "matriz_de_adyacencia.h"
 
 double matriz_de_adyacencia::distancia_euclidea(ciudad c1, ciudad c2){
-  return sqrt(pow(c2.first() - c1.first(), 2) + pow(c2.second() - c1.second(), 2));
+  return sqrt(pow(c2.first - c1.first, 2) + pow(c2.second - c1.second, 2));
 }
 
 void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
@@ -9,9 +9,9 @@ void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
   int i= 0, j= 0;
 
   //Solo rellenamos el triángulo superior sin incluir la diagonal principal
-  for(int it= v.begin(); it != v.end(); it++){
-    for(int jt= it+1; jt != v.end(); jt++){
-      m[i][j]= distancia_euclidea(*i, *j);
+  for(it= v.begin(); it != v.end(); it++){
+    for(jt= it+1; jt != v.end(); jt++){
+      m[i][j]= distancia_euclidea(*it, *jt);
       j++;
     }
     i++;
@@ -27,11 +27,13 @@ matriz_de_adyacencia::matriz_de_adyacencia(const char* fichero){
 
   flujo.open(fichero);
 
-  if(!flujo)
-    cerr << "No se pudo abrir el fichero";
+  if(!flujo){
+    cout << "No se pudo abrir el fichero";
+    exit(-1);
+  }
 
   //Leemos hasta el primer espacio en blanco
-  flujo >> cabecera
+  flujo >> cabecera;
 
   //Lo siguiente son el número de ciudades:
   flujo >> num_cities;
@@ -52,7 +54,7 @@ bool matriz_de_adyacencia::end(){
   return count(visitadas.begin(), visitadas.end(), false) == 0;
 }
 
-bool forma_ciclo(vector<int> recorrido, int nodo){
+bool matriz_de_adyacencia::forma_ciclo(vector<int> recorrido, int nodo){
   for(int i= 0; i< recorrido.size(); i++)
     if(recorrido[i] == nodo)
       return true;
@@ -85,8 +87,8 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
     }
 
     //Como el set ordena automáticamente sus componentes, en la primera posición estará la mínima distancia
-    set<pair<double, int> >::iterator j= posibilidades.begin();
-    double min_dist= it->first(), destino= it->second();
+    set<pair<double, int> >::iterator it= posibilidades.begin();
+    double min_dist= it->first, destino= it->second;
 
     if(!forma_ciclo(r, destino)){
       //Sumamos la distancia a la cantidad de camino recorrido
