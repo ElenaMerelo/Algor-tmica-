@@ -6,7 +6,15 @@ double matriz_de_adyacencia::distancia_euclidea(ciudad c1, ciudad c2){
 
 void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
   vector<ciudad>::const_iterator it, jt;
-  int i= 0, j= 0;
+  vector<vector<double> >::iterator k;
+  int i= 0, j= 0, n= v.size();
+
+  //Inicializamos la matriz triangular superior
+  m.resize(n);
+
+  for(k= m.begin(); k != m.end(); k++)
+    k->resize(n);
+
 
   //Solo rellenamos el triángulo superior sin incluir la diagonal principal
   for(it= v.begin(); it != v.end(); it++){
@@ -19,7 +27,7 @@ void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
 }
 
 //Creamos la matriz de adyacencia a partir del fichero pasado como argumento
-matriz_de_adyacencia::matriz_de_adyacencia(ifstream& fichero){
+matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
   int num_cities, n;
   double x, y;
   string cabecera;
@@ -43,8 +51,8 @@ matriz_de_adyacencia::matriz_de_adyacencia(ifstream& fichero){
     flujo >> n;
     flujo >> x;
     flujo >> y;
-    ciudades[i]= make_pair(x ,y);
-    visitadas[i]= false;
+    ciudades.push_back(make_pair(x ,y));
+    visitadas.push_back(false);
   }
 
   rellenar_matriz(ciudades);
@@ -70,7 +78,7 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
   int origen= i;
   set<pair<double, int> > posibilidades;
   vector<int> r;
-  r[0]= i;
+  r.push_back(i);
   visitadas[i]= true;
 
   //Mientras haya ciudades por recorrer
