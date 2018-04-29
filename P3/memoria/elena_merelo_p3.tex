@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 \usepackage[english]{babel}
-\usepackage[utf8x]{inputenc}
+\usepackage[latin1]{inputenc}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
@@ -78,29 +78,208 @@ Elena Merelo Molina \textsc{} % Your name
 \textsc{} % Supervisor's Name
 \end{flushright}
 \end{minipage}\\[2cm]
-{\large 11 de Abril}\\[2cm] % Date, change the \today to a set date if you want to be precise
-\includegraphics[scale=0.5]{../logo.jpg}
+{\large Abril de 2018}\\[2cm] % Date, change the \today to a set date if you want to be precise
+\includegraphics[scale=0.5]{./logo.jpg}
 \vfill % Fill the rest of the page with whitespace
 \end{titlepage}
 
-%\include{parte_teorica}
 
-\section{Objetivo de la práctica}
+\section{Problema a resolver}
+Un electricista necesita hacer n reparaciones urgentes, y sabe de antemano el tiempo que le va a llevar cada
+una de ellas, en la tarea iésima tardará t minutos. Como en su empresa le pagan dependiendo de la satisfacción del cliente y ésta es inversamente proporcional al tiempo que tardan en atenderles, necesita decidir el orden en el que atenderá los avisos para minimizar el tiempo medio de atención de los clientes (desde el inicio hasta que su reparación es efectuada). 
+Tareas a realizar: Diseñar un algoritmo greedy para resolver lo anterior. Demostrar que el algoritmo obtiene la solución óptima. Modificar el algoritmo anterior para el caso de una empresa en la que se disponga de los servicios de más de un electricista.
+
+\section{Explicación de mi solución}
+Para resolver el problema he creado la clase $matriz_de_adyacencia$, cuyo fichero de cabecera es el siguiente: 
+
+\begin{lstlisting}
+#ifndef __MATRIZ_DE_ADYACENCIA__
+#define __MATRIZ_DE_ADYACENCIA__
+
+#include <vector>
+#include <utility>
+#include <fstream>
+#include <assert.h>
+#include <algorithm>
+#include <math.h>
+#include <set>
+#include <iostream>
+
+using namespace std;
+
+typedef pair<double, double> ciudad;
+
+class matriz_de_adyacencia{
+private:
+  vector<vector<double> > m;
+  vector<ciudad > ciudades;
+  vector<bool> visitadas;
+
+  double distancia_euclidea(ciudad c1, ciudad c2);
+  void rellenar_matriz(const vector<ciudad> &v);
+  bool recorrido_terminado();
+  bool forma_ciclo(vector<int> recorrido, int nodo);
 
 
-\section{Heurística del vecino más cercano}
-Explicación de min_path: 
-Si quisiera obtener el mínimo camino desde la primera ciudad hasta que no haya
-más ciudades por recorrer. Si empieza por la ciudad 0, entonces chequea en 01, 02 y 03.
-Si empieza por la ciudad 1 ha de chequear 1 0, 1 2 y 1 3. Pero en 1 0 no hay nada, tendría
-que chequear en 0 1, en 1 2 y 1 3 si hay. Ídem con 2: 2 0, 2 1 y 2 3 --> 0 2 1 2 y 2 3.
-Si cada vez que nos dan una ciudad creamos un set con la distancia al resto de las 
-ciudades, éste las colocará de menor a mayor, pero luego no podremos saber cuál 
-es la ciudad que se corresponde con dicha distancia mínima. Por ello creamos un set de pair, considerando una pareja en la que la primera coordenada es la distancia de la ciudad pasada como parámetro al resto de las ciudades, y la segunda es la ciudad con la que se está comparando la primera.
+public:
+  //Crea la matriz de adyacencia a partir del fichero pasado como parámetro
+  matriz_de_adyacencia(const char* fichero);
 
-0 2 3 4
-0 0 4 5
-0 0 0 2
+  //Obtiene el camino mínimo desde la fila i columna j de la matriz
+  vector<int> min_path(int i, double &longitud);
+};
+
+#endif
+\end{lstlisting} 
+Veamos uno a uno los métodos y atributos de esta clase.
+
+\begin{itemize}
+\item[\textbf{Atributos privados}]
+\item $m$ es la matriz de adyacencia, que relleno de manera que sea triangular superior y sin tener en cuenta la diagonal principal.
+\item $ciudades$ es un vector con las coordenadas $x$ e $y$ de cada ciudad (es de tipo $vector<ciudad>$, donde ciudad es un par formado por la abscisa y ordenada de la ciudad correspondiente ($pair<double, double>$), definido así simplemente para que quede el código más claro).
+\item $visitadas$ es otro vector en el cual por cada ciudad hay una casilla que será $true$ si dicha ciudad ha sido recorrida por el electricista y $false$ en caso contrario.
+\end{itemize}
+
+\begin{itemize}
+\item[\textbf{Métodos privados}] 
+\item $double distancia_euclidea(ciudad c1, ciudad c2);$ halla la distancia euclídea entre dos ciudades dadas:
+\begin{lstlisting}
+double matriz_de_adyacencia::distancia_euclidea(ciudad c1, ciudad c2){
+  return sqrt(pow(c2.first - c1.first, 2) + pow(c2.second - c1.second, 2));
+}
+\end{lstlisting} 
+\item $void rellenar_matriz(const vector<ciudad> &v);$ dado el vector de ciudades rellena la matriz con la distancia entre ellas: 
+\begin{lstlisting}
+void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
+  int n= v.size();
+
+  //Inicializamos la matriz triangular superior
+  m.resize(n);
+
+  for(unsigned int i= 0; i< m.size(); i++)
+    m[i].resize(n);
+
+  for(int i= 0; i< n; i++)
+    for(int j= i+1; j< n; j++)
+      m[i][j]= distancia_euclidea(v[i], v[j]);
+}
+\end{lstlisting}
+El método es simple: la matriz es realmente un vector de vectores, luego creamos el vector del que van a "colgar" el resto de vectores con un tamaño igual al número de ciudades, y luego cada componente de éste le reservamos también ese espacio, evitando así que se den violaciones de segmento cuando queremos acceder a las componentes de la matriz. Luego rellenamos el triángulo superior con la distancia euclídea entre las ciudades.
+
+\item  $bool recorrido_terminado();$ Chequea si se todas las ciudades han sido visitadas: 
+\begin{lstlisting}
+bool matriz_de_adyacencia::recorrido_terminado(){
+  return count(visitadas.begin(), visitadas.end(), false) == 0;
+}
+\end{lstlisting}
+
+Como habíamos inicializado todas las componentes del vector de ciudades visitadas a false, el recorrido terminará cuando todas sean true; contamos pues el número de "falses" y si es 0 es que el electricista ha terminado. 
+
+\item $bool forma_ciclo(vector<int> recorrido, int nodo);$ Comprueba si se forma un ciclo en el grafo, mirando si el nodo pasado como parámetro ha sido recorrido ya o no: 
+\begin{lstlisting}
+bool matriz_de_adyacencia::forma_ciclo(vector<int> recorrido, int nodo){
+  for(unsigned int i= 0; i< recorrido.size(); i++)
+    if(recorrido[i] == nodo)
+      return true;
+
+  return false;
+}
+\end{lstlisting}
+
+\item[\textbf{Métodos públicos}]
+\item Constructor de la matriz de adyacencia a partir del fichero pasado como argumento: 
+\begin{lstlisting}
+matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
+  int num_cities, n;
+  double x, y;
+  string cabecera;
+  ifstream flujo;
+
+  flujo.open(fichero);
+
+  if(!flujo){
+    cout << "No se pudo abrir el fichero";
+    exit(-1);
+  }
+
+  //Leemos hasta el primer espacio en blanco, lo correspondiente a "DIMENSION:"
+  flujo >> cabecera;
+
+  //Lo siguiente son el número de ciudades:
+  flujo >> num_cities;
+
+  //Creamos la lista con las ciudades y sus coordenadas en el mapa
+  for(int i= 0; i< num_cities; i++){
+    flujo >> n;
+    flujo >> x;
+    flujo >> y;
+    ciudades.push_back(make_pair(x, y));
+    visitadas.push_back(false);
+  }
+
+  rellenar_matriz(ciudades);
+  flujo.close();
+}
+\end{lstlisting}
+Este método abre el fichero y lee la dimensión con $flujo >> cabecera$, al leer $>>$ hasta el primer $whitespace$, en este caso un espacio en blanco, y lo consume, de manera que lo próximo a leer es el número de ciudades, dato que guardamos en una variable. Posteriormente leemos el número de ciudad, su coordenada $x$ y su coordenada $y$, y con estas dos últimos hacemos un par que insertamos en el vector de ciudades, a la vez que inicializamos las componente de ciudades visitadas a false. Una vez se ha hecho esto para todas las ciudades rellenamos la matriz y cerramos el flujo.
+
+\item Algoritmo greedy propiamente dicho que calcula el camino mínimo a partir de una ciudad i: 
+\begin{lstlisting}
+vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
+  int n= ciudades.size(), j;
+  assert( i >= 0 && i < n);
+
+  set<pair<double, int> > posibilidades;
+  set<pair<double, int> >::iterator it;
+  double min_dist, destino;
+  vector<int> r;
+  r.push_back(i);
+  visitadas[i]= true;
+
+  //Mientras haya ciudades por recorrer
+  while(!recorrido_terminado()){
+    for(j= 0; j< n; j++){
+      //Si estamos en el triángulo superior de la matriz de adyacencia
+      if(!forma_ciclo(r, j)){
+        if( i > j)
+        posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
+
+        //Si no está en el triángulo superior obtenemos la coordenada simétrica
+        else if( i< j)
+        posibilidades.insert(make_pair(m[i][j], j));
+
+        //Si i == j no se hace nada.
+      }
+    }
+
+    //Como el set ordena automáticamente sus componentes, en la primera posición estará la mínima distancia
+    it= posibilidades.begin();
+    min_dist= it->first;
+    destino= it->second;
+
+    //Sumamos la distancia a la cantidad de camino recorrido
+    longitud += min_dist;
+
+    //Añadimos la ciudad destino a la lista de ciudades recorridass
+    r.push_back(destino);
+    visitadas[destino]= true;
+    //Nos situamos en la ciudad destino y buscamos desde ahí el mínimo camino a la siguiente que no haya sido recorrida
+    i= destino;
+
+    posibilidades.clear();
+  }
+  return r;
+}
+\end{lstlisting}
+Primeramente nos aseguramos de que la ciudad introducida es válida, y creo un conjunto de $pair<double, int>$, donde el double será una distancia euclídea, la que hay entre la ciudad i y otra j, y el int se corresponde con el índice de la ciudad j, para poder luego más fácilmente saber qué distancia corresponde a quién. Hice la elección de este contenedor de la STL ya que al insertar elementos en un $set$ éstos se ordenan de menor a mayor automáticamente, teniendo un set de pair los ordena fijándose en la primera coordenada y si hay dos primeras coordenadas iguales se fija en la segunda. Así, solo consultando el primer elemento del conjunto tendremos la distancia mínima, sin tener que usar for ni nada.
+
+Introducimos el nodo origen i a la lista de ciudades recorridas, lo ponemos a true en el vector de ciudades visitadas, y mientras haya ciudades por visitar recorremos la columna asociada a la ciudad i; se comprueba que no forme ciclo y si $i>j$ le damos la vuelta a los índices por la representación de la matriz que hemos escogido, veámoslo en un ejemplo sencillo, si fuera 4x4: 
+0 1 2 3
+0 0 2 3
+0 0 0 3
 0 0 0 0
+
+Entonces si queremos obtener la componente $m[0][j]$ no hay problema para ningún j, al estar rellena esa fila, mas sin embargo si tomamos $m[2][j]$ para $j= 0$ tendríamos un 0, pero hay distancia entre esas ciudades, únicamente que la hemos puesto en la posición $m[j][2]$, es por esto que cuando $i>j$ hemos de hacer el cambio. Después inserta esa distancia junto con la ciudad destino en el set, sumamos a la longitud la primera componente del primer elemento del set que, como hemos dicho, contiene la mínima distancia, y añadimos la ciudad j a la lista de ciudades recorridas. Por último nos posicionamos en dicha ciudad, haciendo $i= destino$, vaciamos el set con las posibilidades y se vuelve a empezar, devolviendo cuando se termina el vector con el recorrido y en la variable longitud, al haber sido pasada por referencia estará almacenado el peso total del camino.  
+\end{itemize}
 
 \end{document}

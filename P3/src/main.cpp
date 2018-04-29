@@ -8,12 +8,15 @@ int main(int argc, char **argv){
   }
 
   matriz_de_adyacencia m(argv[1]);
-
   double longitud= 0;
-  vector<int> camino= m.min_path(1, longitud);
+  int origen;
+
+  cout << "Introduzca ciudad por la que quiere empezar(0- dim-1): ";
+  cin >> origen;
+  vector<int> camino= m.min_path(origen, longitud);
 
   cout << "Recorrido con peso mínimo " << longitud << ": ";
-  for(int i= 0; i< camino.size(); i++)
+  for(unsigned int i= 0; i< camino.size(); i++)
     cout << camino[i] << " ";
 
 }

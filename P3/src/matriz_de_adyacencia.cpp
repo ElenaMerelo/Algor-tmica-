@@ -10,11 +10,11 @@ void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
   //Inicializamos la matriz triangular superior
   m.resize(n);
 
-  for(int i= 0; i< m.size(); i++)
+  for(unsigned int i= 0; i< m.size(); i++)
     m[i].resize(n);
 
   for(int i= 0; i< n; i++)
-    for(int j= 0; j< n; j++)
+    for(int j= i+1; j< n; j++)
       m[i][j]= distancia_euclidea(v[i], v[j]);
 }
 
@@ -56,7 +56,7 @@ bool matriz_de_adyacencia::recorrido_terminado(){
 }
 
 bool matriz_de_adyacencia::forma_ciclo(vector<int> recorrido, int nodo){
-  for(int i= 0; i< recorrido.size(); i++)
+  for(unsigned int i= 0; i< recorrido.size(); i++)
     if(recorrido[i] == nodo)
       return true;
 
@@ -80,11 +80,11 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
       //Si estamos en el triángulo superior de la matriz de adyacencia
       if(!forma_ciclo(r, j)){
         if( i > j)
-        posibilidades.insert(make_pair(m[i][j], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
+        posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
 
         //Si no está en el triángulo superior obtenemos la coordenada simétrica
         else if( i< j)
-        posibilidades.insert(make_pair(m[j][i], j));
+        posibilidades.insert(make_pair(m[i][j], j));
 
         //Si i == j no se hace nada.
       }
