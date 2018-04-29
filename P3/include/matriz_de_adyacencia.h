@@ -22,7 +22,7 @@ private:
 
   double distancia_euclidea(ciudad c1, ciudad c2);
   void rellenar_matriz(const vector<ciudad> &v);
-  bool end();
+  bool recorrido_terminado();
   bool forma_ciclo(vector<int> recorrido, int nodo);
 
 
