@@ -30,6 +30,7 @@ void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
 }
 
 //Creamos la matriz de adyacencia a partir del fichero pasado como argumento
+<<<<<<< HEAD
 matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
   int num_cities, n;
   double x, y;
@@ -44,6 +45,14 @@ matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
   }
 
   //Leemos hasta el primer espacio en blanco, lo correspondiente a "DIMENSION:"
+=======
+matriz_de_adyacencia::matriz_de_adyacencia(ifstream& flujo){
+  int num_cities, n;
+  double x, y;
+  string cabecera;
+  
+  //Leemos hasta el primer espacio en blanco
+>>>>>>> ecbcd5f5d35bb491d23a0136127586abc62d8c42
   flujo >> cabecera;
 
   //Lo siguiente son el número de ciudades:
@@ -54,8 +63,13 @@ matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
     flujo >> n;
     flujo >> x;
     flujo >> y;
+<<<<<<< HEAD
     ciudades.push_back(make_pair(x, y));
     visitadas.push_back(false);
+=======
+    ciudades.push_back( make_pair(x ,y) );
+    visitadas.push_back( false );
+>>>>>>> ecbcd5f5d35bb491d23a0136127586abc62d8c42
   }
 
   rellenar_matriz(ciudades);
