@@ -19,19 +19,11 @@ void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
 }
 
 //Creamos la matriz de adyacencia a partir del fichero pasado como argumento
-matriz_de_adyacencia::matriz_de_adyacencia(ifstream& fichero){
+matriz_de_adyacencia::matriz_de_adyacencia(ifstream& flujo){
   int num_cities, n;
   double x, y;
   string cabecera;
-  ifstream flujo;
-
-  flujo.open(fichero);
-
-  if(!flujo){
-    cout << "No se pudo abrir el fichero";
-    exit(-1);
-  }
-
+  
   //Leemos hasta el primer espacio en blanco
   flujo >> cabecera;
 
