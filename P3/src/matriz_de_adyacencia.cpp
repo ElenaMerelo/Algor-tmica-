@@ -5,25 +5,28 @@ double matriz_de_adyacencia::distancia_euclidea(ciudad c1, ciudad c2){
 }
 
 void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
-  vector<ciudad>::const_iterator it, jt;
-  vector<vector<double> >::iterator k;
-  int i= 0, j= 0, n= v.size();
+  //vector<ciudad>::const_iterator it, jt;
+  int n= v.size();
 
   //Inicializamos la matriz triangular superior
   m.resize(n);
 
-  for(k= m.begin(); k != m.end(); k++)
-    k->resize(n);
+  for(int i= 0; i< m.size(); i++)
+    m[i].resize(n);
 
 
   //Solo rellenamos el triángulo superior sin incluir la diagonal principal
-  for(it= v.begin(); it != v.end(); it++){
+  /*for(it= v.begin(); it != v.end(); it++){
     for(jt= it+1; jt != v.end(); jt++){
       m[i][j]= distancia_euclidea(*it, *jt);
       j++;
     }
     i++;
-  }
+  }*/
+
+  for(int i= 0; i< n; i++)
+    for(int j= 0; j< n; j++)
+      m[i][j]= distancia_euclidea(v[i], v[j]);
 }
 
 //Creamos la matriz de adyacencia a partir del fichero pasado como argumento
@@ -40,7 +43,7 @@ matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
     exit(-1);
   }
 
-  //Leemos hasta el primer espacio en blanco
+  //Leemos hasta el primer espacio en blanco, lo correspondiente a "DIMENSION:"
   flujo >> cabecera;
 
   //Lo siguiente son el número de ciudades:
@@ -51,7 +54,7 @@ matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
     flujo >> n;
     flujo >> x;
     flujo >> y;
-    ciudades.push_back(make_pair(x ,y));
+    ciudades.push_back(make_pair(x, y));
     visitadas.push_back(false);
   }
 
@@ -75,7 +78,6 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
   int n= ciudades.size();
   assert( i >= 0 && i < n);
 
-  int origen= i;
   set<pair<double, int> > posibilidades;
   vector<int> r;
   r.push_back(i);
@@ -86,11 +88,11 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
     for(int j= 0; j< n; j++){
       //Si estamos en el triángulo superior de la matriz de adyacencia
       if( i > j)
-        posibilidades.insert(make_pair(m[i][j], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
+      posibilidades.insert(make_pair(m[i][j], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
 
       //Si no está en el triángulo superior obtenemos la coordenada simétrica
       else if( i< j)
-        posibilidades.insert(make_pair(m[j][i], j));
+      posibilidades.insert(make_pair(m[j][i], j));
 
       //Si i == j no se hace nada.
     }
@@ -107,7 +109,7 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
       r.push_back(destino);
       visitadas[destino]= true;
       //Nos situamos en la ciudad destino y buscamos desde ahí el mínimo camino a la siguiente que no haya sido recorrida
-      origen= destino;
+      i= destino;
     }
   }
 }
