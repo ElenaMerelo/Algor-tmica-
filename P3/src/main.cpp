@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int main(int argc, char *argv){
+int main(int argc, char **argv){
   if(argc != 2){
     cout << "Número incorrecto de argumentos";
     exit(-1);
