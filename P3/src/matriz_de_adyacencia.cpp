@@ -111,6 +111,7 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
       //Nos situamos en la ciudad destino y buscamos desde ahí el mínimo camino a la siguiente que no haya sido recorrida
       i= destino;
     }
+    posibilidades.clear();
   }
 }
 
