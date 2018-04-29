@@ -64,44 +64,49 @@ bool matriz_de_adyacencia::forma_ciclo(vector<int> recorrido, int nodo){
 }
 
 vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
-  int n= ciudades.size();
+  int n= ciudades.size(), j;
   assert( i >= 0 && i < n);
 
   set<pair<double, int> > posibilidades;
+  set<pair<double, int> >::iterator it;
+  double min_dist, destino;
   vector<int> r;
   r.push_back(i);
   visitadas[i]= true;
 
   //Mientras haya ciudades por recorrer
   while(!recorrido_terminado()){
-    for(int j= 0; j< n; j++){ 
+    for(j= 0; j< n; j++){
       //Si estamos en el triángulo superior de la matriz de adyacencia
-      if( i > j)
-      posibilidades.insert(make_pair(m[i][j], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
+      if(!forma_ciclo(r, j)){
+        if( i > j)
+        posibilidades.insert(make_pair(m[i][j], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
 
-      //Si no está en el triángulo superior obtenemos la coordenada simétrica
-      else if( i< j)
-      posibilidades.insert(make_pair(m[j][i], j));
+        //Si no está en el triángulo superior obtenemos la coordenada simétrica
+        else if( i< j)
+        posibilidades.insert(make_pair(m[j][i], j));
 
-      //Si i == j no se hace nada.
+        //Si i == j no se hace nada.
+      }
     }
 
     //Como el set ordena automáticamente sus componentes, en la primera posición estará la mínima distancia
-    set<pair<double, int> >::iterator it= posibilidades.begin();
-    double min_dist= it->first, destino= it->second;
+    it= posibilidades.begin();
+    min_dist= it->first;
+    destino= it->second;
 
-    if(!forma_ciclo(r, destino)){
-      //Sumamos la distancia a la cantidad de camino recorrido
-      longitud += min_dist;
+    //Sumamos la distancia a la cantidad de camino recorrido
+    longitud += min_dist;
 
-      //Añadimos la ciudad destino a la lista de ciudades recorridass
-      r.push_back(destino);
-      visitadas[destino]= true;
-      //Nos situamos en la ciudad destino y buscamos desde ahí el mínimo camino a la siguiente que no haya sido recorrida
-      i= destino;
-    }
+    //Añadimos la ciudad destino a la lista de ciudades recorridass
+    r.push_back(destino);
+    visitadas[destino]= true;
+    //Nos situamos en la ciudad destino y buscamos desde ahí el mínimo camino a la siguiente que no haya sido recorrida
+    i= destino;
+
     posibilidades.clear();
   }
+  return r;
 }
 
 

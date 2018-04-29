@@ -14,6 +14,6 @@ int main(int argc, char **argv){
 
   cout << "Recorrido con peso mínimo " << longitud << ": ";
   for(int i= 0; i< camino.size(); i++)
-    cout << i << " ";
+    cout << camino[i] << " ";
 
 }
