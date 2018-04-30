@@ -32,6 +32,12 @@ public:
 
   //Obtiene el camino mínimo desde la fila i columna j de la matriz
   vector<int> min_path(int i, double &longitud);
+
+  //Obtiene el camino mínimo de todos los posibles, comparando entre todos los recorridos que hay (tantos como ciudades)
+  vector<int> recorrido_optimo(double &longitud);
+
+  //Muestra la matriz de adyacencia
+  void show_matrix();
 };
 
 #endif

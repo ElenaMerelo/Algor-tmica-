@@ -65,6 +65,7 @@ bool matriz_de_adyacencia::forma_ciclo(vector<int> recorrido, int nodo){
 
 vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
   int n= ciudades.size(), j;
+  longitud= 0;
   assert( i >= 0 && i < n);
 
   set<pair<double, int> > posibilidades;
@@ -107,6 +108,29 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
     posibilidades.clear();
   }
   return r;
+}
+
+void matriz_de_adyacencia::show_matrix(){
+  for(int i= 0; i< m.size(); i++){
+    for(int j= 0; j< m.size(); j++)
+      cout << m[i][j] << " ";
+    cout << "\n";
+  }
+}
+
+vector<int> matriz_de_adyacencia::recorrido_optimo(double &longitud_min){
+  double longitud= 0;
+  longitud_min= 0;
+  vector<int> min= min_path(0, longitud_min), actual;
+  for(unsigned int i= 1; i< m.size(); i++){
+    longitud= 0;
+    actual= min_path(i, longitud);
+    if(longitud< longitud_min){
+      min= actual;
+      longitud_min= longitud;
+    }
+  }
+  return min;
 }
 
 
