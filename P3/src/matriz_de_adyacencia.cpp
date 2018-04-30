@@ -143,19 +143,36 @@ vector<int> matriz_de_adyacencia::recorrido_optimo(double &longitud_min){
   return min;
 }
 
-/*
 vector<vector<int> > matriz_de_adyacencia::reparto_multiple(int city, int n_electricians, double &longitud){
   assert(n_electricians > 0);
-
+  int i= 0, nearest_city, position;
+  double dist, min_dist= LONG_MAX;
   vector<vector<int> > repartos(n);
+
+  longitud= 0;
   if(n_electricians == 1)
-    return min_path(i, longitud)
+    return min_path(i, longitud);
   else{
-    for(int i= 0; i< n_electricians; i++){
-      repartos[i].push_back(ciudad_mas_cercana(city, min_dist, r));
+    while(!recorrido_terminado()){
+      //Movemos a cada electricista de la ciudad de partida a la más cercana
+      if(i < n_electricians){
+        repartos[i].push_back(ciudad_mas_cercana(city, dist));
+        longitud += dist;
+        i++;
+      }
+
+      //Si todavía hay ciudades por recorrer buscamos al electricista que esté más cerca de la siguiente
+      for(i= 0; i< repartos.size(); i++){
+        nearest_city= ciudad_mas_cercana(repartos[i][0], dist);
+        if(dist < min_dist){
+          min_dist= dist;
+          position= i;
+        }
+      }
+
     }
   }
-}*/
+}
 
 
 
