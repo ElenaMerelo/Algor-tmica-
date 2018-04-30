@@ -109,6 +109,7 @@ Para resolver el problema he creado la clase $matriz_de_adyacencia$, cuyo ficher
 #include <assert.h>
 #include <algorithm>
 #include <math.h>
+#include <limits.h>
 #include <set>
 #include <iostream>
 
@@ -126,14 +127,25 @@ private:
   void rellenar_matriz(const vector<ciudad> &v);
   bool recorrido_terminado();
   bool forma_ciclo(vector<int> recorrido, int nodo);
+  void clear();
 
 
 public:
-  //Crea la matriz de adyacencia a partir del fichero pasado como parametro
+  //Crea la matriz de adyacencia a partir del fichero pasado como parámetro
   matriz_de_adyacencia(const char* fichero);
 
-  //Obtiene el camino minimo desde la fila i columna j de la matriz
+  //Muestra la matriz de adyacencia
+  void show_matrix();
+  
+  //Obtiene el camino mínimo desde la fila i columna j de la matriz
   vector<int> min_path(int i, double &longitud);
+
+  //Obtiene el camino mínimo de todos los posibles, comparando entre todos los recorridos que hay (tantos como ciudades)
+  vector<int> recorrido_optimo(double &longitud);
+
+  //Reparte el recorrido entre varios electricistas
+  vector<vector<int> > reparto_multiple(int i, double &longitud);
+
 };
 
 #endif
@@ -194,6 +206,15 @@ bool matriz_de_adyacencia::forma_ciclo(vector<int> recorrido, int nodo){
   return false;
 }
 \end{lstlisting}
+
+\item \verb|void clear();| rellena el vector de ciudades visitadas con false, para empezar un nuevo recorrido:
+\begin{lstlisting}
+void matriz_de_adyacencia::clear(){
+  visitadas.clear();
+  visitadas.resize(m.size(), false);
+}
+\end{lstlisting}
+
 \end{itemize}
 
 \begin{itemize}[wide, nosep, labelindent = 0pt, topsep = 1ex]
@@ -225,9 +246,9 @@ matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
     flujo >> x;
     flujo >> y;
     ciudades.push_back(make_pair(x, y));
-    visitadas.push_back(false);
   }
 
+  visitadas.resize(num_cities, n);	//Inicializamos el vector con todas las componentes a false, al no haberse visitado ninguna todavia
   rellenar_matriz(ciudades);
   flujo.close();
 }
@@ -298,6 +319,41 @@ Introducimos el nodo origen i a la lista de ciudades recorridas, lo ponemos a tr
 
 
 Entonces si queremos obtener la componente $m[0][j]$ no hay problema para ningún j, al estar rellena esa fila, mas sin embargo si tomamos $m[2][j]$ para $j= 0$ tendríamos un 0, pero hay distancia entre esas ciudades, únicamente que la hemos puesto en la posición $m[j][2]$, es por esto que cuando $i>j$ hemos de hacer el cambio. Después inserta esa distancia junto con la ciudad destino en el set, sumamos a la longitud la primera componente del primer elemento del set que, como hemos dicho, contiene la mínima distancia, y añadimos la ciudad j a la lista de ciudades recorridas. Por último nos posicionamos en dicha ciudad, haciendo $i= destino$, vaciamos el set con las posibilidades y se vuelve a empezar, devolviendo cuando se termina el vector con el recorrido y en la variable longitud, al haber sido pasada por referencia estará almacenado el peso total del camino.  
+
+\item \verb|vector<int> recorrido_optimo(double &longitud);|
+\begin{lstlisting}
+vector<int> matriz_de_adyacencia::recorrido_optimo(double &longitud_min){
+  double longitud= 0;
+  longitud_min= LONG_MAX;
+  vector<int> actual, min;
+  for(int i= 0; i< m.size(); i++){
+    longitud= 0;
+    clear();
+    actual= min_path(i, longitud);
+    if(longitud< longitud_min){
+      min= actual;
+      longitud_min= longitud;
+    }
+  }
+  return min;
+}
+\end{lstlisting}
+
+Como vemos, usa el método \verb|min_path| y desde la ciudad 0 a la dimension-1 calcula el recorrido mínimo y su peso, quedándose con el menor de todos ellos.
+ 
+\item Método que muestra la matriz de adyacencia, recorriendo sus filas y columnas: 
+\begin{lstlisting}
+void matriz_de_adyacencia::show_matrix(){
+  for(int i= 0; i< m.size(); i++){
+    for(int j= 0; j< m.size(); j++)
+      cout << m[i][j] << " ";
+    cout << "\n";
+  }
+}
+\end{lstlisting}
+
+\item \verb|vector<vector<int> > reparto_multiple(int i, double &longitud);|
+
 \end{itemize}
 
 \end{document}

@@ -15,8 +15,10 @@ int main(int argc, char **argv){
   cin >> origen;
   vector<int> camino= m.min_path(origen, longitud);
 
+  /* Descomentar si se quiere ver la matriz de adyacencia
   cout << "\nMatriz de adyacencia: \n";
   m.show_matrix();
+  */
 
   cout << "\nEl recorrido con peso mínimo " << longitud << "es: ";
   for(i= 0; i< camino.size(); i++)

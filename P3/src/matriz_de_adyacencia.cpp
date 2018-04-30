@@ -44,9 +44,8 @@ matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
     flujo >> x;
     flujo >> y;
     ciudades.push_back(make_pair(x, y));
-    visitadas.push_back(false);
   }
-
+  visitadas.resize(num_cities, false);
   rellenar_matriz(ciudades);
   flujo.close();
 }
@@ -63,67 +62,78 @@ bool matriz_de_adyacencia::forma_ciclo(vector<int> recorrido, int nodo){
   return false;
 }
 
-vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
-  int n= ciudades.size(), j;
-  longitud= 0;
-  assert( i >= 0 && i < n);
-
-  set<pair<double, int> > posibilidades;
-  set<pair<double, int> >::iterator it;
-  double min_dist, destino;
-  vector<int> r;
-  r.push_back(i);
-  visitadas[i]= true;
-
-  //Mientras haya ciudades por recorrer
-  while(!recorrido_terminado()){
-    for(j= 0; j< n; j++){
-      //Si estamos en el triángulo superior de la matriz de adyacencia
-      if(!forma_ciclo(r, j)){
-        if( i > j)
-        posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
-
-        //Si no está en el triángulo superior obtenemos la coordenada simétrica
-        else if( i< j)
-        posibilidades.insert(make_pair(m[i][j], j));
-
-        //Si i == j no se hace nada.
-      }
-    }
-
-    //Como el set ordena automáticamente sus componentes, en la primera posición estará la mínima distancia
-    it= posibilidades.begin();
-    min_dist= it->first;
-    destino= it->second;
-
-    //Sumamos la distancia a la cantidad de camino recorrido
-    longitud += min_dist;
-
-    //Añadimos la ciudad destino a la lista de ciudades recorridass
-    r.push_back(destino);
-    visitadas[destino]= true;
-    //Nos situamos en la ciudad destino y buscamos desde ahí el mínimo camino a la siguiente que no haya sido recorrida
-    i= destino;
-
-    posibilidades.clear();
-  }
-  return r;
+void matriz_de_adyacencia::clear(){
+  visitadas.clear();
+  visitadas.resize(m.size(), false);
 }
 
 void matriz_de_adyacencia::show_matrix(){
   for(int i= 0; i< m.size(); i++){
     for(int j= 0; j< m.size(); j++)
-      cout << m[i][j] << " ";
+    cout << m[i][j] << " ";
     cout << "\n";
   }
 }
 
+int matriz_de_adyacencia::ciudad_mas_cercana(int i, double &min_dist, vector<int> r){
+  int j, n= ciudades.size();
+  set<pair<double, int> > posibilidades;
+  set<pair<double, int> >::iterator it;
+
+  min_dist= 0;
+
+  for(j= 0; j< n; j++){
+    //Si estamos en el triángulo superior de la matriz de adyacencia
+    if(!forma_ciclo(r, j)){
+      if( i > j)
+      posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
+
+      //Si no está en el triángulo superior obtenemos la coordenada simétrica
+      else if( i< j)
+      posibilidades.insert(make_pair(m[i][j], j));
+
+      //Si i == j no se hace nada.
+    }
+  }
+
+  //Como el set ordena automáticamente sus componentes, en la primera posición estará la mínima distancia
+  it= posibilidades.begin();
+  min_dist= it->first;
+  return it->second;
+}
+
+vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
+  int n= ciudades.size(), j;
+  longitud= 0;
+  assert( i >= 0 && i < n);
+
+  double min_dist;
+  vector<int> r;
+
+  //Mientras haya ciudades por recorrer
+  while(!recorrido_terminado()){
+    //Añadimos la ciudad destino a la lista de ciudades recorridas
+    r.push_back(i);
+    visitadas[i]= true;
+
+    j= ciudad_mas_cercana(i, min_dist, r);
+    //Sumamos la distancia a la cantidad de camino recorrido
+    longitud += min_dist;
+
+    //Nos situamos en la ciudad destino y buscamos desde ahí el mínimo camino a la siguiente que no haya sido recorrida
+    i= j;
+  }
+  return r;
+}
+
+
 vector<int> matriz_de_adyacencia::recorrido_optimo(double &longitud_min){
   double longitud= 0;
-  longitud_min= 0;
-  vector<int> min= min_path(0, longitud_min), actual;
-  for(unsigned int i= 1; i< m.size(); i++){
+  longitud_min= LONG_MAX;
+  vector<int> actual, min;
+  for(int i= 0; i< m.size(); i++){
     longitud= 0;
+    clear();
     actual= min_path(i, longitud);
     if(longitud< longitud_min){
       min= actual;
@@ -132,8 +142,15 @@ vector<int> matriz_de_adyacencia::recorrido_optimo(double &longitud_min){
   }
   return min;
 }
+/*
+vector<vector<int> > matriz_de_adyacencia::reparto_multiple(int i, int n_electricians, double &longitud){
+  assert(n_electricians > 0);
+  if(n_electricians == 1)
+    return min_path(i, longitud)
+  else{
 
-
+  }
+}*/
 
 
 
