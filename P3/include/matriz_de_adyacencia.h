@@ -24,7 +24,7 @@ private:
   double distancia_euclidea(ciudad c1, ciudad c2);
   void rellenar_matriz(const vector<ciudad> &v);
   bool recorrido_terminado();
-  bool forma_ciclo(vector<int> recorrido, int nodo);
+  bool forma_ciclo(vector<bool> recorridas, int nodo);
   void clear();
 
 
@@ -36,7 +36,7 @@ public:
   void show_matrix();
 
   //Busca la ciudad más cercana a una dada
-  int ciudad_mas_cercana(int i, double &min_dist, vector<int> recorrido);
+  int ciudad_mas_cercana(int city, double &min_dist);
 
   //Obtiene el camino mínimo desde la fila i columna j de la matriz
   vector<int> min_path(int i, double &longitud);

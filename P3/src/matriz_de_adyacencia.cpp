@@ -54,9 +54,9 @@ bool matriz_de_adyacencia::recorrido_terminado(){
   return count(visitadas.begin(), visitadas.end(), false) == 0;
 }
 
-bool matriz_de_adyacencia::forma_ciclo(vector<int> recorrido, int nodo){
-  for(unsigned int i= 0; i< recorrido.size(); i++)
-    if(recorrido[i] == nodo)
+bool matriz_de_adyacencia::forma_ciclo(vector<bool> recorridas, int nodo){
+  for(unsigned int i= 0; i< recorridas.size(); i++)
+    if(recorridas[nodo] == true)
       return true;
 
   return false;
@@ -75,7 +75,7 @@ void matriz_de_adyacencia::show_matrix(){
   }
 }
 
-int matriz_de_adyacencia::ciudad_mas_cercana(int i, double &min_dist, vector<int> r){
+int matriz_de_adyacencia::ciudad_mas_cercana(int i, double &min_dist){
   int j, n= ciudades.size();
   set<pair<double, int> > posibilidades;
   set<pair<double, int> >::iterator it;
@@ -84,7 +84,7 @@ int matriz_de_adyacencia::ciudad_mas_cercana(int i, double &min_dist, vector<int
 
   for(j= 0; j< n; j++){
     //Si estamos en el triángulo superior de la matriz de adyacencia
-    if(!forma_ciclo(r, j)){
+    if(!forma_ciclo(visitadas, j)){
       if( i > j)
       posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
 
@@ -116,7 +116,7 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
     r.push_back(i);
     visitadas[i]= true;
 
-    j= ciudad_mas_cercana(i, min_dist, r);
+    j= ciudad_mas_cercana(i, min_dist);
     //Sumamos la distancia a la cantidad de camino recorrido
     longitud += min_dist;
 
@@ -142,13 +142,18 @@ vector<int> matriz_de_adyacencia::recorrido_optimo(double &longitud_min){
   }
   return min;
 }
+
 /*
-vector<vector<int> > matriz_de_adyacencia::reparto_multiple(int i, int n_electricians, double &longitud){
+vector<vector<int> > matriz_de_adyacencia::reparto_multiple(int city, int n_electricians, double &longitud){
   assert(n_electricians > 0);
+
+  vector<vector<int> > repartos(n);
   if(n_electricians == 1)
     return min_path(i, longitud)
   else{
-
+    for(int i= 0; i< n_electricians; i++){
+      repartos[i].push_back(ciudad_mas_cercana(city, min_dist, r));
+    }
   }
 }*/
 
