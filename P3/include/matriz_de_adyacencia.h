@@ -45,7 +45,7 @@ public:
   vector<int> recorrido_optimo(double &longitud);
 
   //Reparte el recorrido entre varios electricistas
-  //vector<vector<int> > reparto_multiple(int i, int n_electricians, double &longitud);
+  vector<vector<int> > reparto_multiple(int origen, int n_electricians, double &longitud);
 
 };
 

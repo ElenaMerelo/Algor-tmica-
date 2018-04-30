@@ -8,8 +8,8 @@ int main(int argc, char **argv){
   }
 
   matriz_de_adyacencia m(argv[1]);
-  double longitud, long_min;
-  int origen, i;
+  double longitud;
+  int origen, i, n;
 
   cout << "Introduzca ciudad por la que quiere empezar(0- dim-1): ";
   cin >> origen;
@@ -24,8 +24,43 @@ int main(int argc, char **argv){
   for(i= 0; i< camino.size(); i++)
     cout << camino[i] << " ";
 
-  vector<int> min= m.recorrido_optimo(long_min);
-  cout << "\nEl camino más corto con peso " << long_min << " es: ";
+  vector<int> min= m.recorrido_optimo(longitud);
+  cout << "\nEl camino más corto con peso " << longitud << " es: ";
   for(i= 0; i< min.size(); i++)
     cout << min[i] << " ";
+
+  cout << "\nIntroduzca ciudad de partida para 1 electricista(aplicando reparto_multiple): ";
+  cin>> origen;
+
+  vector<vector<int> > rm1= m.reparto_multiple(origen, 1, longitud);
+  cout << "\nSi hay 1 electricista(reparto_multiple). Longitud mínima: " << longitud << ". Recorrido: ";
+  for(i= 0; i< rm1.size(); i++){
+    for(int j= 0; j< rm1[i].size(); j++)
+      cout << rm1[i][j] << " ";
+    cout << "\n";
+  }
+
+  cout << "\nIntroduzca ciudad de partida y número de electricistas: ";
+  cin>> origen;
+  cin >> n;
+
+  vector<vector<int> > rm2= m.reparto_multiple(origen, n, longitud);
+  cout << "\nLongitud mínima: " << longitud << ". Recorrido de cada uno de los electricistas: ";
+  for(i= 0; i< rm2.size(); i++){
+    for(int j= 0; j< rm2[i].size(); j++)
+      cout << rm2[i][j] << " ";
+    cout << "\n";
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+//
