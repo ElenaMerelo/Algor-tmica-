@@ -82,7 +82,7 @@ int matriz_de_adyacencia::ciudad_mas_cercana(int i, double &min_dist){
 
   for(j= 0; j< n; j++){
     //Si estamos en el triángulo superior de la matriz de adyacencia
-    if(!visitadas[j]){
+    if(!visitadas[j]){  //si no forma ciclo
       if( i > j)
       posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
 
@@ -155,34 +155,27 @@ vector<vector<int> > matriz_de_adyacencia::reparto_multiple(int city, int n, dou
     repartos[i].resize(1);
 
   longitud= 0;
-  if(n == 1){
-    vector<int> r= min_path(city, longitud);
-    repartos[0].erase(repartos[0].begin()); //Para ajustar el resize a 1.
 
-    for(i= 0; i< r.size(); i++)
-      repartos[0].push_back(r[i]);
-  }else{
-    /*Todos los electricistas parten de la ciudad city, por lo que la primera
-    componente del vector que contiene el recorrido que hace cada uno será city.*/
-    for(i= 0; i< n; i++)
-      repartos[i][0]=city;
+  /*Todos los electricistas parten de la ciudad city, por lo que la primera
+  componente del vector que contiene el recorrido que hace cada uno será city.*/
+  for(i= 0; i< n; i++)
+    repartos[i][0]=city;
 
-    //Como ya ha sido visitada ponemos su componente a true
-    visitadas[city]= true;
-    i= 0;
+  //Como ya ha sido visitada ponemos su componente a true
+  visitadas[city]= true;
+  i= 0;
 
-    while(!recorrido_terminado()){
-      //Movemos a cada electricista de la ciudad en la que se encuentra a la más cercana
-      if(i < n){
-        repartos[i].push_back(ciudad_mas_cercana(repartos[i].back(), dist));
-        visitadas[repartos[i].back()]=true;
-        longitud += dist;
-        i++;
-      }
-      else if(i == n)
-        i= 0;
+  while(!recorrido_terminado()){
+    //Movemos a cada electricista de la ciudad en la que se encuentra a la más cercana
+    if(i < n){
+      repartos[i].push_back(ciudad_mas_cercana(repartos[i].back(), dist));
+      visitadas[repartos[i].back()]=true;
+      longitud += dist;
+      i++;
     }
-  }
+    else if(i == n)
+      i= 0;
+    }
   return repartos;
 }
 
