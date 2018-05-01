@@ -1,0 +1,33 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{matriz\PYGZus{}de\PYGZus{}adyacencia}\PYG{o}{::}\PYG{n}{matriz\PYGZus{}de\PYGZus{}adyacencia}\PYG{p}{(}\PYG{k}{const} \PYG{k+kt}{char} \PYG{o}{*}\PYG{n}{fichero}\PYG{p}{)\PYGZob{}}
+  \PYG{k+kt}{int} \PYG{n}{num\PYGZus{}cities}\PYG{p}{,} \PYG{n}{n}\PYG{p}{;}
+  \PYG{k+kt}{double} \PYG{n}{x}\PYG{p}{,} \PYG{n}{y}\PYG{p}{;}
+  \PYG{n}{string} \PYG{n}{cabecera}\PYG{p}{;}
+  \PYG{n}{ifstream} \PYG{n}{flujo}\PYG{p}{;}
+
+  \PYG{n}{flujo}\PYG{p}{.}\PYG{n}{open}\PYG{p}{(}\PYG{n}{fichero}\PYG{p}{);}
+
+  \PYG{k}{if}\PYG{p}{(}\PYG{o}{!}\PYG{n}{flujo}\PYG{p}{)\PYGZob{}}
+    \PYG{n}{cout} \PYG{o}{\PYGZlt{}\PYGZlt{}} \PYG{l+s}{\PYGZdq{}No se pudo abrir el fichero\PYGZdq{}}\PYG{p}{;}
+    \PYG{n}{exit}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{);}
+  \PYG{p}{\PYGZcb{}}
+
+  \PYG{c+c1}{//Leemos hasta el primer espacio en blanco, lo correspondiente a \PYGZdq{}DIMENSION:\PYGZdq{}}
+  \PYG{n}{flujo} \PYG{o}{\PYGZgt{}\PYGZgt{}} \PYG{n}{cabecera}\PYG{p}{;}
+
+  \PYG{c+c1}{//Lo siguiente son el numero de ciudades:}
+  \PYG{n}{flujo} \PYG{o}{\PYGZgt{}\PYGZgt{}} \PYG{n}{num\PYGZus{}cities}\PYG{p}{;}
+
+  \PYG{c+c1}{//Creamos la lista con las ciudades y sus coordenadas en el mapa}
+  \PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i}\PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;} \PYG{n}{i}\PYG{o}{\PYGZlt{}} \PYG{n}{num\PYGZus{}cities}\PYG{p}{;} \PYG{n}{i}\PYG{o}{++}\PYG{p}{)\PYGZob{}}
+    \PYG{n}{flujo} \PYG{o}{\PYGZgt{}\PYGZgt{}} \PYG{n}{n}\PYG{p}{;}
+    \PYG{n}{flujo} \PYG{o}{\PYGZgt{}\PYGZgt{}} \PYG{n}{x}\PYG{p}{;}
+    \PYG{n}{flujo} \PYG{o}{\PYGZgt{}\PYGZgt{}} \PYG{n}{y}\PYG{p}{;}
+    \PYG{n}{ciudades}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(}\PYG{n}{make\PYGZus{}pair}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{y}\PYG{p}{));}
+  \PYG{p}{\PYGZcb{}}
+
+  \PYG{n}{visitadas}\PYG{p}{.}\PYG{n}{resize}\PYG{p}{(}\PYG{n}{num\PYGZus{}cities}\PYG{p}{,} \PYG{n}{n}\PYG{p}{);}	\PYG{c+c1}{//Inicializamos el vector con todas las componentes a false, al no haberse visitado ninguna todavia}
+  \PYG{n}{rellenar\PYGZus{}matriz}\PYG{p}{(}\PYG{n}{ciudades}\PYG{p}{);}
+  \PYG{n}{flujo}\PYG{p}{.}\PYG{n}{close}\PYG{p}{();}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

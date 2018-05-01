@@ -1,0 +1,285 @@
+\begin{figure}[h]
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\begin{minted}[bgcolor=bg,
+               frame=lines]{c++}
+
+#ifndef __MATRIZ_DE_ADYACENCIA__
+#define __MATRIZ_DE_ADYACENCIA__
+
+#include <vector>
+#include <utility>
+#include <fstream>
+#include <assert.h>
+#include <algorithm>
+#include <math.h>
+#include <limits.h>
+#include <set>
+#include <iostream>
+
+using namespace std;
+
+typedef pair<double, double> ciudad;
+
+class matriz_de_adyacencia{
+private:
+  vector<vector<double> > m;
+  vector<ciudad > ciudades;
+  vector<bool> visitadas;
+
+  double distancia_euclidea(ciudad c1, ciudad c2);
+  void rellenar_matriz(const vector<ciudad> &v);
+  bool recorrido_terminado();
+  bool forma_ciclo(vector<int> recorrido, int nodo);
+  void clear();
+
+
+public:
+  //Crea la matriz de adyacencia a partir del fichero pasado como parametro
+  matriz_de_adyacencia(const char* fichero);
+
+  //Muestra la matriz de adyacencia
+  void show_matrix();
+
+  //Obtiene el camino minimo desde la fila i columna j de la matriz
+  vector<int> min_path(int i, double &longitud);
+
+  //Obtiene el camino minimo de todos los posibles, comparando entre todos los recorridos que hay (tantos como ciudades)
+  vector<int> recorrido_optimo(double &longitud);
+
+    //Reparte el recorrido entre varios electricistas
+  vector<vector<int> > reparto_multiple(int i, double &longitud);
+
+};
+
+#endif
+\end{minted}
+\captionof{listing}{Fichero de cabecera del programa}
+\label{matriz_de_adyacencia.h}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[h]
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\begin{minted}[bgcolor=bg,
+               frame=lines,
+               framesep=2mm]{cpp}
+double matriz_de_adyacencia::distancia_euclidea(ciudad c1, ciudad c2){
+  return sqrt(pow(c2.first - c1.first, 2) + pow(c2.second - c1.second, 2));
+}
+\end{minted}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[h]
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\begin{minted}[bgcolor=bg,
+               frame=lines,
+               framesep=2mm]{cpp}
+void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
+  int n= v.size();
+
+  //Inicializamos la matriz triangular superior
+  m.resize(n);
+
+  for(unsigned int i= 0; i< m.size(); i++)
+    m[i].resize(n);
+
+  for(int i= 0; i< n; i++)
+    for(int j= i+1; j< n; j++)
+      m[i][j]= distancia_euclidea(v[i], v[j]);
+}
+\end{minted}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[h]
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\begin{minted}[bgcolor=bg,
+               frame=lines,
+               framesep=2mm]{cpp}
+bool matriz_de_adyacencia::recorrido_terminado(){
+  return count(visitadas.begin(), visitadas.end(), false) == 0;
+}
+\end{minted}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[h]
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\begin{minted}[bgcolor=bg,
+               frame=lines,
+               framesep=2mm]{cpp}
+bool matriz_de_adyacencia::forma_ciclo(vector<int> recorrido, int nodo){
+  for(unsigned int i= 0; i< recorrido.size(); i++)
+    if(recorrido[i] == nodo)
+      return true;
+
+  return false;
+}
+\end{minted}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[h]
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\begin{minted}[bgcolor=bg,
+               frame=lines]{cpp}
+void matriz_de_adyacencia::clear(){
+  visitadas.clear();
+  visitadas.resize(m.size(), false);
+}
+\end{minted}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[h]
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\begin{minted}[bgcolor=bg,
+               frame=lines,
+               framesep=2mm]{cpp}
+matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
+  int num_cities, n;
+  double x, y;
+  string cabecera;
+  ifstream flujo;
+
+  flujo.open(fichero);
+
+  if(!flujo){
+    cout << "No se pudo abrir el fichero";
+    exit(-1);
+  }
+
+  //Leemos hasta el primer espacio en blanco, lo correspondiente a "DIMENSION:"
+  flujo >> cabecera;
+
+  //Lo siguiente son el numero de ciudades:
+  flujo >> num_cities;
+
+  //Creamos la lista con las ciudades y sus coordenadas en el mapa
+  for(int i= 0; i< num_cities; i++){
+    flujo >> n;
+    flujo >> x;
+    flujo >> y;
+    ciudades.push_back(make_pair(x, y));
+  }
+
+  visitadas.resize(num_cities, n); //Inicializamos el vector con todas las componentes a false, al no haberse visitado ninguna todavia
+  rellenar_matriz(ciudades);
+  flujo.close();
+}
+\end{minted}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[h]
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\begin{minted}[bgcolor=bg,
+               frame=lines]{cpp}
+vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
+  int n= ciudades.size(), j;
+  assert( i >= 0 && i < n);
+
+  set<pair<double, int> > posibilidades;
+  set<pair<double, int> >::iterator it;
+  double min_dist, destino;
+  vector<int> r;
+  r.push_back(i);
+  visitadas[i]= true;
+
+  //Mientras haya ciudades por recorrer
+  while(!recorrido_terminado()){
+    for(j= 0; j< n; j++){
+      //Si estamos en el triangulo superior de la matriz de adyacencia
+      if(!forma_ciclo(r, j)){
+        if( i > j)
+        posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a que ciudad va
+
+        //Si no esta en el triangulo superior obtenemos la coordenada simetrica
+        else if( i< j)
+        posibilidades.insert(make_pair(m[i][j], j));
+
+        //Si i == j no se hace nada.
+      }
+    }
+
+    //Como el set ordena automaticamente sus componentes, en la primera posicion estara la minima distancia
+    it= posibilidades.begin();
+    min_dist= it->first;
+    destino= it->second;
+
+    //Sumamos la distancia a la cantidad de camino recorrido
+    longitud += min_dist;
+
+    //Aniadimos la ciudad destino a la lista de ciudades recorridas
+    r.push_back(destino);
+    visitadas[destino]= true;
+    //Nos situamos en la ciudad destino y buscamos desde ahi el minimo camino a la siguiente que no haya sido recorrida
+    i= destino;
+
+    posibilidades.clear();
+  }
+  return r;
+}
+\end{minted}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[h]
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\begin{minted}[bgcolor=bg,
+               frame=lines]{cpp}
+vector<int> matriz_de_adyacencia::recorrido_optimo(double &longitud_min){
+  double longitud= 0;
+  longitud_min= LONG_MAX;
+  vector<int> actual, min;
+  for(int i= 0; i< m.size(); i++){
+    longitud= 0;
+    clear();
+    actual= min_path(i, longitud);
+    if(longitud< longitud_min){
+      min= actual;
+      longitud_min= longitud;
+    }
+  }
+  return min;
+}
+\end{minted}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[h]
+\begin{minipage}[t]{0.5\textwidth}
+\centering
+\begin{minted}[bgcolor=bg,
+               frame=lines]{cpp}
+void matriz_de_adyacencia::show_matrix(){
+  for(int i= 0; i< m.size(); i++){
+    for(int j= 0; j< m.size(); j++)
+      cout << m[i][j] << " ";
+    cout << "\n";
+  }
+}
+\end{minted}
+\end{minipage}
+\end{figure}
+\efloatseparator
+ 

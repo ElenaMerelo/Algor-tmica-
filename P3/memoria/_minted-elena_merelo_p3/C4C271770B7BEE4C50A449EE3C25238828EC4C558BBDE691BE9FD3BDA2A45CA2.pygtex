@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{double} \PYG{n}{matriz\PYGZus{}de\PYGZus{}adyacencia}\PYG{o}{::}\PYG{n}{distancia\PYGZus{}euclidea}\PYG{p}{(}\PYG{n}{ciudad} \PYG{n}{c1}\PYG{p}{,} \PYG{n}{ciudad} \PYG{n}{c2}\PYG{p}{)\PYGZob{}}
+  \PYG{k}{return} \PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{pow}\PYG{p}{(}\PYG{n}{c2}\PYG{p}{.}\PYG{n}{first} \PYG{o}{\PYGZhy{}} \PYG{n}{c1}\PYG{p}{.}\PYG{n}{first}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{)} \PYG{o}{+} \PYG{n}{pow}\PYG{p}{(}\PYG{n}{c2}\PYG{p}{.}\PYG{n}{second} \PYG{o}{\PYGZhy{}} \PYG{n}{c1}\PYG{p}{.}\PYG{n}{second}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{));}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

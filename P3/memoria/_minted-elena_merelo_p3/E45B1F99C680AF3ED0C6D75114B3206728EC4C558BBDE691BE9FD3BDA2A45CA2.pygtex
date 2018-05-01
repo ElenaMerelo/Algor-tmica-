@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{bool} \PYG{n}{matriz\PYGZus{}de\PYGZus{}adyacencia}\PYG{o}{::}\PYG{n}{recorrido\PYGZus{}terminado}\PYG{p}{()\PYGZob{}}
+  \PYG{k}{return} \PYG{n}{count}\PYG{p}{(}\PYG{n}{visitadas}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{(),} \PYG{n}{visitadas}\PYG{p}{.}\PYG{n}{end}\PYG{p}{(),} \PYG{n+nb}{false}\PYG{p}{)} \PYG{o}{==} \PYG{l+m+mi}{0}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

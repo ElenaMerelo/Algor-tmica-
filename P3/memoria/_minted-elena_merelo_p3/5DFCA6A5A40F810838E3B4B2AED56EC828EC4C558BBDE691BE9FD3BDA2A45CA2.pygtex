@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{bool} \PYG{n}{matriz\PYGZus{}de\PYGZus{}adyacencia}\PYG{o}{::}\PYG{n}{forma\PYGZus{}ciclo}\PYG{p}{(}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{n}{recorrido}\PYG{p}{,} \PYG{k+kt}{int} \PYG{n}{nodo}\PYG{p}{)\PYGZob{}}
+  \PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{unsigned} \PYG{k+kt}{int} \PYG{n}{i}\PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;} \PYG{n}{i}\PYG{o}{\PYGZlt{}} \PYG{n}{recorrido}\PYG{p}{.}\PYG{n}{size}\PYG{p}{();} \PYG{n}{i}\PYG{o}{++}\PYG{p}{)}
+    \PYG{k}{if}\PYG{p}{(}\PYG{n}{recorrido}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{==} \PYG{n}{nodo}\PYG{p}{)}
+      \PYG{k}{return} \PYG{n+nb}{true}\PYG{p}{;}
+
+  \PYG{k}{return} \PYG{n+nb}{false}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{n}{matriz\PYGZus{}de\PYGZus{}adyacencia}\PYG{o}{::}\PYG{n}{recorrido\PYGZus{}optimo}\PYG{p}{(}\PYG{k+kt}{double} \PYG{o}{\PYGZam{}}\PYG{n}{longitud\PYGZus{}min}\PYG{p}{)\PYGZob{}}
+  \PYG{k+kt}{double} \PYG{n}{longitud}\PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;}
+  \PYG{n}{longitud\PYGZus{}min}\PYG{o}{=} \PYG{n}{LONG\PYGZus{}MAX}\PYG{p}{;}
+  \PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{n}{actual}\PYG{p}{,} \PYG{n}{min}\PYG{p}{;}
+  \PYG{k}{for}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i}\PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;} \PYG{n}{i}\PYG{o}{\PYGZlt{}} \PYG{n}{m}\PYG{p}{.}\PYG{n}{size}\PYG{p}{();} \PYG{n}{i}\PYG{o}{++}\PYG{p}{)\PYGZob{}}
+    \PYG{n}{longitud}\PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;}
+    \PYG{n}{clear}\PYG{p}{();}
+    \PYG{n}{actual}\PYG{o}{=} \PYG{n}{min\PYGZus{}path}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{longitud}\PYG{p}{);}
+    \PYG{k}{if}\PYG{p}{(}\PYG{n}{longitud}\PYG{o}{\PYGZlt{}} \PYG{n}{longitud\PYGZus{}min}\PYG{p}{)\PYGZob{}}
+      \PYG{n}{min}\PYG{o}{=} \PYG{n}{actual}\PYG{p}{;}
+      \PYG{n}{longitud\PYGZus{}min}\PYG{o}{=} \PYG{n}{longitud}\PYG{p}{;}
+    \PYG{p}{\PYGZcb{}}
+  \PYG{p}{\PYGZcb{}}
+  \PYG{k}{return} \PYG{n}{min}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

@@ -20,14 +20,16 @@ int main(int argc, char **argv){
   m.show_matrix();
   */
 
-  cout << "\nEl recorrido con peso mínimo " << longitud << "es: ";
-  for(i= 0; i< camino.size(); i++)
-    cout << camino[i] << " ";
+  cout << "\nMin path\n";
+  m.show_path(camino, longitud);
+
+  vector<int> cerrado= m.cierra_camino(camino, longitud);
+  cout << "\nCierra camino\n";
+  m.show_path(cerrado, longitud);
 
   vector<int> min= m.recorrido_optimo(longitud);
-  cout << "\nEl camino más corto con peso " << longitud << " es: ";
-  for(i= 0; i< min.size(); i++)
-    cout << min[i] << " ";
+  cout << "\nRecorrido óptimo\n";
+  m.show_path(min, longitud);
 
   cout << "\nIntroduzca ciudad de partida para 1 electricista(aplicando reparto_multiple): ";
   cin>> origen;

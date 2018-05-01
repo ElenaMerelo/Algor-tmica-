@@ -1,0 +1,47 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{n}{matriz\PYGZus{}de\PYGZus{}adyacencia}\PYG{o}{::}\PYG{n}{min\PYGZus{}path}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i}\PYG{p}{,} \PYG{k+kt}{double} \PYG{o}{\PYGZam{}}\PYG{n}{longitud}\PYG{p}{)\PYGZob{}}
+  \PYG{k+kt}{int} \PYG{n}{n}\PYG{o}{=} \PYG{n}{ciudades}\PYG{p}{.}\PYG{n}{size}\PYG{p}{(),} \PYG{n}{j}\PYG{p}{;}
+  \PYG{n}{assert}\PYG{p}{(} \PYG{n}{i} \PYG{o}{\PYGZgt{}=} \PYG{l+m+mi}{0} \PYG{o}{\PYGZam{}\PYGZam{}} \PYG{n}{i} \PYG{o}{\PYGZlt{}} \PYG{n}{n}\PYG{p}{);}
+
+  \PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,} \PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{o}{\PYGZgt{}} \PYG{n}{posibilidades}\PYG{p}{;}
+  \PYG{n}{set}\PYG{o}{\PYGZlt{}}\PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,} \PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{o}{\PYGZgt{}::}\PYG{n}{iterator} \PYG{n}{it}\PYG{p}{;}
+  \PYG{k+kt}{double} \PYG{n}{min\PYGZus{}dist}\PYG{p}{,} \PYG{n}{destino}\PYG{p}{;}
+  \PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{n}{r}\PYG{p}{;}
+  \PYG{n}{r}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(}\PYG{n}{i}\PYG{p}{);}
+  \PYG{n}{visitadas}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]}\PYG{o}{=} \PYG{n+nb}{true}\PYG{p}{;}
+
+  \PYG{c+c1}{//Mientras haya ciudades por recorrer}
+  \PYG{k}{while}\PYG{p}{(}\PYG{o}{!}\PYG{n}{recorrido\PYGZus{}terminado}\PYG{p}{())\PYGZob{}}
+    \PYG{k}{for}\PYG{p}{(}\PYG{n}{j}\PYG{o}{=} \PYG{l+m+mi}{0}\PYG{p}{;} \PYG{n}{j}\PYG{o}{\PYGZlt{}} \PYG{n}{n}\PYG{p}{;} \PYG{n}{j}\PYG{o}{++}\PYG{p}{)\PYGZob{}}
+      \PYG{c+c1}{//Si estamos en el triangulo superior de la matriz de adyacencia}
+      \PYG{k}{if}\PYG{p}{(}\PYG{o}{!}\PYG{n}{forma\PYGZus{}ciclo}\PYG{p}{(}\PYG{n}{r}\PYG{p}{,} \PYG{n}{j}\PYG{p}{))\PYGZob{}}
+        \PYG{k}{if}\PYG{p}{(} \PYG{n}{i} \PYG{o}{\PYGZgt{}} \PYG{n}{j}\PYG{p}{)}
+        \PYG{n}{posibilidades}\PYG{p}{.}\PYG{n}{insert}\PYG{p}{(}\PYG{n}{make\PYGZus{}pair}\PYG{p}{(}\PYG{n}{m}\PYG{p}{[}\PYG{n}{j}\PYG{p}{][}\PYG{n}{i}\PYG{p}{],} \PYG{n}{j}\PYG{p}{));}  \PYG{c+c1}{//insertamos la distancia entre las ciudades y a que ciudad va}
+
+        \PYG{c+c1}{//Si no esta en el triangulo superior obtenemos la coordenada simetrica}
+        \PYG{k}{else} \PYG{n+nf}{if}\PYG{p}{(} \PYG{n}{i}\PYG{o}{\PYGZlt{}} \PYG{n}{j}\PYG{p}{)}
+        \PYG{n}{posibilidades}\PYG{p}{.}\PYG{n}{insert}\PYG{p}{(}\PYG{n}{make\PYGZus{}pair}\PYG{p}{(}\PYG{n}{m}\PYG{p}{[}\PYG{n}{i}\PYG{p}{][}\PYG{n}{j}\PYG{p}{],} \PYG{n}{j}\PYG{p}{));}
+
+        \PYG{c+c1}{//Si i == j no se hace nada.}
+      \PYG{p}{\PYGZcb{}}
+    \PYG{p}{\PYGZcb{}}
+
+    \PYG{c+c1}{//Como el set ordena automaticamente sus componentes, en la primera posicion estara la minima distancia}
+    \PYG{n}{it}\PYG{o}{=} \PYG{n}{posibilidades}\PYG{p}{.}\PYG{n}{begin}\PYG{p}{();}
+    \PYG{n}{min\PYGZus{}dist}\PYG{o}{=} \PYG{n}{it}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{first}\PYG{p}{;}
+    \PYG{n}{destino}\PYG{o}{=} \PYG{n}{it}\PYG{o}{\PYGZhy{}\PYGZgt{}}\PYG{n}{second}\PYG{p}{;}
+
+    \PYG{c+c1}{//Sumamos la distancia a la cantidad de camino recorrido}
+    \PYG{n}{longitud} \PYG{o}{+=} \PYG{n}{min\PYGZus{}dist}\PYG{p}{;}
+
+    \PYG{c+c1}{//Aniadimos la ciudad destino a la lista de ciudades recorridas}
+    \PYG{n}{r}\PYG{p}{.}\PYG{n}{push\PYGZus{}back}\PYG{p}{(}\PYG{n}{destino}\PYG{p}{);}
+    \PYG{n}{visitadas}\PYG{p}{[}\PYG{n}{destino}\PYG{p}{]}\PYG{o}{=} \PYG{n+nb}{true}\PYG{p}{;}
+    \PYG{c+c1}{//Nos situamos en la ciudad destino y buscamos desde ahi el minimo camino a la siguiente que no haya sido recorrida}
+    \PYG{n}{i}\PYG{o}{=} \PYG{n}{destino}\PYG{p}{;}
+
+    \PYG{n}{posibilidades}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+  \PYG{p}{\PYGZcb{}}
+  \PYG{k}{return} \PYG{n}{r}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{void} \PYG{n}{matriz\PYGZus{}de\PYGZus{}adyacencia}\PYG{o}{::}\PYG{n}{clear}\PYG{p}{()\PYGZob{}}
+  \PYG{n}{visitadas}\PYG{p}{.}\PYG{n}{clear}\PYG{p}{();}
+  \PYG{n}{visitadas}\PYG{p}{.}\PYG{n}{resize}\PYG{p}{(}\PYG{n}{m}\PYG{p}{.}\PYG{n}{size}\PYG{p}{(),} \PYG{n+nb}{false}\PYG{p}{);}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

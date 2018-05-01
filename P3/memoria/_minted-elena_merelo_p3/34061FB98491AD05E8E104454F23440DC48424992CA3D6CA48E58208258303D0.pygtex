@@ -1,0 +1,51 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{c+cp}{\PYGZsh{}ifndef \PYGZus{}\PYGZus{}MATRIZ\PYGZus{}DE\PYGZus{}ADYACENCIA\PYGZus{}\PYGZus{}}
+\PYG{c+cp}{\PYGZsh{}define \PYGZus{}\PYGZus{}MATRIZ\PYGZus{}DE\PYGZus{}ADYACENCIA\PYGZus{}\PYGZus{}}
+
+\PYG{c+cp}{\PYGZsh{}include} \PYG{c+cpf}{\PYGZlt{}vector\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include} \PYG{c+cpf}{\PYGZlt{}utility\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include} \PYG{c+cpf}{\PYGZlt{}fstream\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include} \PYG{c+cpf}{\PYGZlt{}assert.h\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include} \PYG{c+cpf}{\PYGZlt{}algorithm\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include} \PYG{c+cpf}{\PYGZlt{}math.h\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include} \PYG{c+cpf}{\PYGZlt{}limits.h\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include} \PYG{c+cpf}{\PYGZlt{}set\PYGZgt{}}
+\PYG{c+cp}{\PYGZsh{}include} \PYG{c+cpf}{\PYGZlt{}iostream\PYGZgt{}}
+
+\PYG{k}{using} \PYG{k}{namespace} \PYG{n}{std}\PYG{p}{;}
+
+\PYG{k}{typedef} \PYG{n}{pair}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{p}{,} \PYG{k+kt}{double}\PYG{o}{\PYGZgt{}} \PYG{n}{ciudad}\PYG{p}{;}
+
+\PYG{k}{class} \PYG{n+nc}{matriz\PYGZus{}de\PYGZus{}adyacencia}\PYG{p}{\PYGZob{}}
+\PYG{k}{private}\PYG{o}{:}
+  \PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{double}\PYG{o}{\PYGZgt{}} \PYG{o}{\PYGZgt{}} \PYG{n}{m}\PYG{p}{;}
+  \PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ciudad} \PYG{o}{\PYGZgt{}} \PYG{n}{ciudades}\PYG{p}{;}
+  \PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{bool}\PYG{o}{\PYGZgt{}} \PYG{n}{visitadas}\PYG{p}{;}
+
+  \PYG{k+kt}{double} \PYG{n+nf}{distancia\PYGZus{}euclidea}\PYG{p}{(}\PYG{n}{ciudad} \PYG{n}{c1}\PYG{p}{,} \PYG{n}{ciudad} \PYG{n}{c2}\PYG{p}{);}
+  \PYG{k+kt}{void} \PYG{n+nf}{rellenar\PYGZus{}matriz}\PYG{p}{(}\PYG{k}{const} \PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{ciudad}\PYG{o}{\PYGZgt{}} \PYG{o}{\PYGZam{}}\PYG{n}{v}\PYG{p}{);}
+  \PYG{k+kt}{bool} \PYG{n+nf}{recorrido\PYGZus{}terminado}\PYG{p}{();}
+  \PYG{k+kt}{bool} \PYG{n+nf}{forma\PYGZus{}ciclo}\PYG{p}{(}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{n}{recorrido}\PYG{p}{,} \PYG{k+kt}{int} \PYG{n}{nodo}\PYG{p}{);}
+  \PYG{k+kt}{void} \PYG{n+nf}{clear}\PYG{p}{();}
+
+
+\PYG{k}{public}\PYG{o}{:}
+  \PYG{c+c1}{//Crea la matriz de adyacencia a partir del fichero pasado como parámetro}
+  \PYG{n}{matriz\PYGZus{}de\PYGZus{}adyacencia}\PYG{p}{(}\PYG{k}{const} \PYG{k+kt}{char}\PYG{o}{*} \PYG{n}{fichero}\PYG{p}{);}
+
+  \PYG{c+c1}{//Muestra la matriz de adyacencia}
+  \PYG{k+kt}{void} \PYG{n+nf}{show\PYGZus{}matrix}\PYG{p}{();}
+
+  \PYG{c+c1}{//Obtiene el camino mínimo desde la fila i columna j de la matriz}
+  \PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{n}{min\PYGZus{}path}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i}\PYG{p}{,} \PYG{k+kt}{double} \PYG{o}{\PYGZam{}}\PYG{n}{longitud}\PYG{p}{);}
+
+  \PYG{c+c1}{//Obtiene el camino mínimo de todos los posibles, comparando entre todos los recorridos que hay (tantos como ciudades)}
+  \PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{n}{recorrido\PYGZus{}optimo}\PYG{p}{(}\PYG{k+kt}{double} \PYG{o}{\PYGZam{}}\PYG{n}{longitud}\PYG{p}{);}
+
+    \PYG{c+c1}{//Reparte el recorrido entre varios electricistas}
+  \PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{n}{vector}\PYG{o}{\PYGZlt{}}\PYG{k+kt}{int}\PYG{o}{\PYGZgt{}} \PYG{o}{\PYGZgt{}} \PYG{n}{reparto\PYGZus{}multiple}\PYG{p}{(}\PYG{k+kt}{int} \PYG{n}{i}\PYG{p}{,} \PYG{k+kt}{double} \PYG{o}{\PYGZam{}}\PYG{n}{longitud}\PYG{p}{);}
+
+\PYG{p}{\PYGZcb{};}
+
+\PYG{c+cp}{\PYGZsh{}endif}
+\end{Verbatim}

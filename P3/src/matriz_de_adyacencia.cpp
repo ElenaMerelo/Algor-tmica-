@@ -54,25 +54,23 @@ bool matriz_de_adyacencia::recorrido_terminado(){
   return count(visitadas.begin(), visitadas.end(), false) == 0;
 }
 
-bool matriz_de_adyacencia::forma_ciclo(vector<bool> recorridas, int nodo){
-  for(unsigned int i= 0; i< recorridas.size(); i++)
-    if(recorridas[nodo] == true)
-      return true;
-
-  return false;
-}
-
 void matriz_de_adyacencia::clear(){
   visitadas.clear();
   visitadas.resize(m.size(), false);
 }
 
 void matriz_de_adyacencia::show_matrix(){
-  for(int i= 0; i< m.size(); i++){
-    for(int j= 0; j< m.size(); j++)
+  for(unsigned int i= 0; i< m.size(); i++){
+    for(unsigned int j= 0; j< m.size(); j++)
     cout << m[i][j] << " ";
     cout << "\n";
   }
+}
+
+void matriz_de_adyacencia::show_path(vector<int> v, double longitud){
+  cout << "Peso: " << longitud << ", recorrido: ";
+  for(unsigned int i= 0; i< v.size(); i++)
+    cout << v[i] << " ";
 }
 
 int matriz_de_adyacencia::ciudad_mas_cercana(int i, double &min_dist){
@@ -84,7 +82,7 @@ int matriz_de_adyacencia::ciudad_mas_cercana(int i, double &min_dist){
 
   for(j= 0; j< n; j++){
     //Si estamos en el triángulo superior de la matriz de adyacencia
-    if(!forma_ciclo(visitadas, j)){
+    if(!visitadas[j]){
       if( i > j)
       posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
 
@@ -105,7 +103,6 @@ int matriz_de_adyacencia::ciudad_mas_cercana(int i, double &min_dist){
 vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
   int n= ciudades.size(), j;
   longitud= 0;
-  assert( i >= 0 && i < n);
 
   double min_dist;
   vector<int> r;
@@ -128,10 +125,11 @@ vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
 
 
 vector<int> matriz_de_adyacencia::recorrido_optimo(double &longitud_min){
-  double longitud= 0;
+  double longitud;
   longitud_min= LONG_MAX;
   vector<int> actual, min;
-  for(int i= 0; i< m.size(); i++){
+
+  for(unsigned int i= 0; i< m.size(); i++){
     longitud= 0;
     clear();
     actual= min_path(i, longitud);
@@ -145,23 +143,29 @@ vector<int> matriz_de_adyacencia::recorrido_optimo(double &longitud_min){
 
 vector<vector<int> > matriz_de_adyacencia::reparto_multiple(int city, int n, double &longitud){
   assert(n > 0);
+  assert(city >= 0 && city < ciudades.size());
+  clear();
 
   int i;
   double dist= 0;
   vector<vector<int> > repartos;
   repartos.resize(n);
 
+  for(i=0; i< repartos.size(); i++)
+    repartos[i].resize(1);
+
   longitud= 0;
   if(n == 1){
     vector<int> r= min_path(city, longitud);
+    repartos[0].erase(repartos[0].begin()); //Para ajustar el resize a 1.
+
     for(i= 0; i< r.size(); i++)
       repartos[0].push_back(r[i]);
-  }
-  else{
+  }else{
     /*Todos los electricistas parten de la ciudad city, por lo que la primera
     componente del vector que contiene el recorrido que hace cada uno será city.*/
     for(i= 0; i< n; i++)
-      repartos[i].push_back(city);
+      repartos[i][0]=city;
 
     //Como ya ha sido visitada ponemos su componente a true
     visitadas[city]= true;
@@ -170,7 +174,8 @@ vector<vector<int> > matriz_de_adyacencia::reparto_multiple(int city, int n, dou
     while(!recorrido_terminado()){
       //Movemos a cada electricista de la ciudad en la que se encuentra a la más cercana
       if(i < n){
-        repartos[i].push_back(ciudad_mas_cercana(repartos[i][repartos[i].size() - 1], dist));
+        repartos[i].push_back(ciudad_mas_cercana(repartos[i].back(), dist));
+        visitadas[repartos[i].back()]=true;
         longitud += dist;
         i++;
       }
@@ -179,6 +184,19 @@ vector<vector<int> > matriz_de_adyacencia::reparto_multiple(int city, int n, dou
     }
   }
   return repartos;
+}
+
+vector<int> matriz_de_adyacencia::cierra_camino(vector<int> recorrido, double &longitud){
+  vector<int> f= recorrido;
+  int j= recorrido.back(), i= recorrido.front();
+
+  if(i > j)
+    longitud += m[j][i];
+  else
+    longitud += m[i][j];
+
+  f.push_back(i);
+  return f;
 }
 
 
