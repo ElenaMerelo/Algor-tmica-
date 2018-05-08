@@ -1,0 +1,426 @@
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{listingsutf8}
+\usepackage{xparse}
+\usepackage[hmargin=2cm]{geometry}
+\usepackage{color} 
+\NewDocumentCommand{\codeword}{v}{%
+\texttt{\textcolor{blue}{#1}}%
+}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92} 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+\lstset{inputencoding=utf8/latin1}
+%Para mostrar el código bonito 
+\lstset{language=C++} 
+\lstdefinestyle{customc}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\parindent,
+  language=C++,
+  showstringspaces=false,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+}
+
+\begin{document}
+\begin{titlepage}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\center
+\textsc{\LARGE Universidad de Granada}\\[1.5cm] % Name of your university/college
+\textsc{\Large Algorítmica}\\[0.5cm] % Major heading such as course name
+\HRule \\[0.4cm]
+{ \huge \bfseries Práctica 4: Backtracking}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Autora:}\\
+Elena Merelo Molina \textsc{} % Your name
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{} \\
+\textsc{} % Supervisor's Name
+\end{flushright}
+\end{minipage}\\[2cm]
+{\large Mayo de 2018}\\[2cm] % Date, change the \today to a set date if you want to be precise
+\includegraphics[scale=0.5]{./logo.jpg}
+\vfill % Fill the rest of the page with whitespace
+\end{titlepage}
+
+
+\section{Problema a resolver}
+Se va a celebrar una cena de gala a la que asistirán n invitados. Todos se van a sentar alrededor de una única
+gran mesa rectangular, de forma que cada invitado tendrá sentados junto a él a otros dos comensales (uno a
+su izquierda y otro a su derecha). En función de las caracterı́sticas de cada invitado (por ejemplo categorı́a
+o puesto, lugar de procedencia,...) existen unas normas de protocolo que indican el nivel de conveniencia de
+que dos invitados se sienten en lugares contiguos (supondremos que dicho nivel es un número entero entre
+0 y 100). El nivel de conveniencia total de una asignación de invitados a su puesto en la mesa es la suma
+de todos los niveles de conveniencia de cada invitado con cada uno de los dos invitados sentados a su lado.
+Se desea sentar a los invitados de forma que el nivel de conveniencia global sea lo mayor posible. Diseñar
+e implementar un algoritmo vuelta atrás para resolver este problema. Realizar un estudio empı́rico de su
+eficiencia.
+
+\section{Explicación de mi solución}
+Supongamos que tenemos cuatro invitados, n= 4. Entonces empezamos desde el invitado 1 y vemos la conveniencia con 2 y 0, son su izquierda y derecha, y una vez visto esto nos movemos a la persona 2. Sumamos la conveniencia 2 con 1 y con 3 y nos movemos a 3, mirando la conv con 2 y con 4. De esta manera, iteramos desde 1 hasta n-1. Una vez hecho esto habremos de añadir la conveniencia de 0 con 1 y 0 con el último comensal, así como la de 4 con 3 y 4 con 0. 
+
+\begin{lstlisting}
+#ifndef __MATRIZ_DE_ADYACENCIA__
+#define __MATRIZ_DE_ADYACENCIA__
+
+#include <vector>
+#include <utility>
+#include <fstream> 
+#include <assert.h>
+#include <algorithm>
+#include <math.h>
+#include <limits.h>
+#include <set>
+#include <iostream>
+
+using namespace std;
+
+typedef pair<double, double> ciudad;
+
+class matriz_de_adyacencia{
+private:
+  vector<vector<double> > m;
+  vector<ciudad > ciudades;
+  vector<bool> visitadas;
+
+  double distancia_euclidea(ciudad c1, ciudad c2);
+  void rellenar_matriz(const vector<ciudad> &v);
+  bool recorrido_terminado();
+  void clear();
+
+
+public:
+  //Crea la matriz de adyacencia a partir del fichero pasado como parametro
+  matriz_de_adyacencia(const char* fichero);
+
+  //Muestra la matriz de adyacencia
+  void show_matrix();
+
+  //Muestra el camino y su longitud
+  void show_path(vector<int> path, double longitud);
+
+  //Busca la ciudad mas cercana a una dada
+  int ciudad_mas_cercana(int city, double &min_dist);
+
+  //Obtiene el camino minimo desde la fila i columna j de la matriz
+  vector<int> min_path(int i, double &longitud);
+
+  //Aniade al recorrido total la vuelta al punto de partida, con el peso adicional que eso conlleve
+  vector<int> cierra_camino(vector<int> recorrido, double &longitud);
+
+  //Obtiene el camino minimo de todos los posibles, comparando entre todos los recorridos que hay (tantos como ciudades)
+  vector<int> recorrido_optimo(double &longitud);
+
+  //Reparte el recorrido entre varios electricistas
+  vector<vector<int> > reparto_multiple(int origen, int n_electricians, double &longitud);
+
+};
+
+#endif
+
+\end{lstlisting} 
+Veamos uno a uno todos los métodos y atributos de esta clase.
+
+\begin{itemize}[wide, nosep, labelindent = 0pt, topsep = 1ex]
+\item[\textbf{Atributos privados}]
+\item $m$ es la matriz de adyacencia, que relleno de manera que sea triangular superior y sin tener en cuenta la diagonal principal.
+\item $ciudades$ es un vector con las coordenadas $x$ e $y$ de cada ciudad (es de tipo \verb|vector<ciudad>|, donde ciudad es un par formado por la abscisa y ordenada de la ciudad correspondiente (\verb|$pair<double, double>|), definido así simplemente para que quede el código más claro).
+\item $visitadas$ es otro vector en el cual por cada ciudad hay una casilla que será \verb|true| si dicha ciudad ha sido recorrida por el electricista y \verb|false| en caso contrario.
+\end{itemize}
+\begin{itemize}[wide, nosep, labelindent = 0pt, topsep = 1ex]
+\item[\textbf{Métodos privados}] 
+\item \verb|double distancia_euclidea(ciudad c1, ciudad c2);| halla la distancia euclídea entre dos ciudades dadas:
+\begin{lstlisting}
+double matriz_de_adyacencia::distancia_euclidea(ciudad c1, ciudad c2){
+  return sqrt(pow(c2.first - c1.first, 2) + pow(c2.second - c1.second, 2));
+}
+\end{lstlisting} 
+\item \verb|void rellenar_matriz(const vector<ciudad> &v);| dado el vector de ciudades rellena la matriz con la distancia entre ellas: 
+\begin{lstlisting}
+void matriz_de_adyacencia::rellenar_matriz(const vector<ciudad> &v){
+  int n= v.size();
+  //Inicializamos la matriz triangular superior
+  m.resize(n);
+  for(unsigned int i= 0; i< m.size(); i++)
+    m[i].resize(n);
+  for(int i= 0; i< n; i++)
+    for(int j= i+1; j< n; j++)
+      m[i][j]= distancia_euclidea(v[i], v[j]);
+}
+\end{lstlisting}
+El método es simple: la matriz es realmente un vector de vectores, luego creamos el vector del que van a "colgar" el resto de vectores con un tamaño igual al número de ciudades, y luego cada componente de éste le reservamos ese mismo espacio, evitando así que se den violaciones de segmento cuando queramos acceder a las componentes de la matriz. Por último rellenamos el triángulo superior con la distancia euclídea entre las ciudades.
+\item  \verb|bool recorrido_terminado();| Chequea si todas las ciudades han sido visitadas (cuando una ciudad se recorrer se pone su componente del vector \verb|visitadas| a \verb|true|, por ello si hay 0 "falses" ya habremos finalizado): 
+\begin{lstlisting}
+bool matriz_de_adyacencia::recorrido_terminado(){
+  return count(visitadas.begin(), visitadas.end(), false) == 0;
+}
+\end{lstlisting}
+ 
+\item \verb|void clear();| rellena el vector de ciudades visitadas con false, para poder empezar un nuevo recorrido:
+\begin{lstlisting}
+void matriz_de_adyacencia::clear(){
+  visitadas.clear();
+  visitadas.resize(m.size(), false);
+}
+\end{lstlisting}
+\end{itemize}
+\begin{itemize}[wide, nosep, labelindent = 0pt, topsep = 1ex]
+\item[\textbf{Métodos públicos}] 
+\item Constructor de la matriz de adyacencia a partir del fichero pasado como argumento: 
+\begin{lstlisting}
+matriz_de_adyacencia::matriz_de_adyacencia(const char *fichero){
+  int num_cities, n;
+  double x, y;
+  string cabecera;
+  ifstream flujo;
+
+  flujo.open(fichero);
+
+  if(!flujo){
+    cout << "No se pudo abrir el fichero";
+    exit(-1);
+  }
+
+  //Leemos hasta el primer espacio en blanco, lo correspondiente a "DIMENSION:"
+  flujo >> cabecera;
+
+  //Lo siguiente son el número de ciudades:
+  flujo >> num_cities;
+
+  //Creamos la lista con las ciudades y sus coordenadas en el mapa
+  for(int i= 0; i< num_cities; i++){
+    flujo >> n;
+    flujo >> x;
+    flujo >> y;
+    ciudades.push_back(make_pair(x, y));
+  }
+  visitadas.resize(num_cities, false);
+  rellenar_matriz(ciudades);
+  flujo.close();
+}
+}
+\end{lstlisting}
+Este método abre el fichero y obtiene la dimensión con \verb|flujo >> cabecera|, al leer \verb|>>| hasta el primer \verb|whitespace|, en este caso un espacio en blanco, y consumirlo. Así, lo próximo a leer es el número de ciudades, dato que guardamos en una variable. Posteriormente leemos el número de ciudad, su coordenada $x$ y su coordenada $y$, y con estas dos últimos hacemos un par (\verb|pair <double, double>| que insertamos en el vector de ciudades. Una vez fuera del bucle, inicializamos las componentes de ciudades visitadas a false, rellenamos la matriz con los datos sobre las ciudades recogidos y cerramos el flujo.
+
+\item Método que muestra la matriz de adyacencia, recorriendo sus filas y columnas: 
+\begin{lstlisting}
+void matriz_de_adyacencia::show_matrix(){
+  for(int i= 0; i< m.size(); i++){
+    for(int j= 0; j< m.size(); j++)
+      cout << m[i][j] << " ";
+    cout << "\n";
+  }
+}
+\end{lstlisting}
+
+\item \verb|void show_path(vector<int> path, double longitud);| Muestrael recorrido y la longitud del mismo del camino pasado como parámetro:
+\begin{lstlisting}
+void matriz_de_adyacencia::show_path(vector<int> v, double longitud){
+  cout << "Peso: " << longitud << ", recorrido: ";
+  for(unsigned int i= 0; i< v.size(); i++)
+    cout << v[i] << " ";
+}
+\end{lstlisting}
+
+\item \verb|int ciudad_mas_cercana(int city, double &min_dist);| Obtiene la ciudad más cercana a una dada, guardando la distancia en la variable correspondiente: 
+
+\begin{lstlisting}
+int matriz_de_adyacencia::ciudad_mas_cercana(int i, double &min_dist){
+  int j, n= ciudades.size();
+  set<pair<double, int> > posibilidades;
+  set<pair<double, int> >::iterator it;
+
+  min_dist= 0;
+
+  for(j= 0; j< n; j++){
+    //Si estamos en el triangulo superior de la matriz de adyacencia
+    if(!visitadas[j]){
+      if( i > j)
+      posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a que ciudad va
+
+      //Si no esta en el triangulo superior obtenemos la coordenada simetrica
+      else if( i< j)
+      posibilidades.insert(make_pair(m[i][j], j));
+
+      //Si i == j no se hace nada.
+    }
+  }
+
+  //Como el set ordena automaticamente sus componentes, en la primera posicion estara la minima distancia
+  it= posibilidades.begin();
+  min_dist= it->first;
+  return it->second;
+}
+
+
+\end{lstlisting}
+ Como vemos, en primer lugar se crea un conjunto de \verb|<pair<double, int>|, donde el \verb|double| será una distancia euclídea, la que hay entre la ciudad i y otra j, y el \verb|int| se corresponde con el índice de la ciudad j, para poder luego más fácilmente saber qué distancia corresponde a qué. Hice la elección de este contenedor de la STL ya que al insertar elementos en un \verb|set| éstos se ordenan de menor a mayor automáticamente, en este caso al ser un set de pair los ordena fijándose en la primera coordenada y si las dos primeras coordenadas son iguales se fija en la segunda. Consecuentemente, solo consultando el primer elemento del conjunto tendremos la distancia mínima, sin tener que usar un bucle \verb|for| ni nada.
+
+Posteriormente recorremos la fila asociada a la ciudad i, añadiendo las distancias de i a j al set, comprobando que no se forme ciclo (con \verb|if(!visitadas[j])|, mirando si ha sido recorrida ya la ciudad o no) y si $i>j$ le damos la vuelta a los índices por la representación de la matriz que he escogido (es triangular superior), veámoslo en un ejemplo sencillo. Si fuera 4x4: 
+\[
+   M=
+  \left[ {\begin{array}{cccc}
+   0 & 1 & 2 & 3 \\
+   0 & 0 & 2 & 3 \\
+   0 & 0 & 0 & 3 \\
+   0 & 0 & 0 & 0 \\
+  \end{array} } \right]
+\]
+
+
+Entonces si queremos obtener la componente $m[0][j]$ no hay problema para ningún j, al estar rellena esa fila, mas sin embargo si tomamos $m[2][j]$ para $j= 0$ tendríamos un 0, pero hay distancia entre esas ciudades, únicamente que la hemos puesto en la posición $m[j][2]$, es por esto que cuando $i>j$ hemos de hacer el cambio. Después insertamos esa distancia junto con la ciudad destino en el set, sumamos a la longitud la primera componente del primer elemento del set que, como hemos dicho, contiene la mínima distancia, y devolvemos la ciudad j.
+
+\item Algoritmo greedy propiamente dicho que calcula el camino mínimo a partir de una ciudad i: 
+\begin{lstlisting}
+vector<int> matriz_de_adyacencia::min_path(int i, double &longitud){
+  int n= ciudades.size(), j;
+  longitud= 0;
+
+  double min_dist;
+  vector<int> r;
+
+  //Mientras haya ciudades por recorrer
+  while(!recorrido_terminado()){
+    //Aniadimos la ciudad destino a la lista de ciudades recorridas
+    r.push_back(i);
+    visitadas[i]= true;
+
+    j= ciudad_mas_cercana(i, min_dist);
+    //Sumamos la distancia a la cantidad de camino recorrido
+    longitud += min_dist;
+
+    //Nos situamos en la ciudad destino y buscamos desde ahi el minimo camino a la siguiente que no haya sido recorrida
+    i= j;
+  }
+  return r;
+}
+\end{lstlisting}
+Su funcionamiento es sencillo; en una primera iteración se pone el índice de la ciudad i a \verb|true| en el vector \verb|visitadas|, que es donde nos encontramos, y se añade a la lista de ciudades recorridas. Posteriormente se busca la ciudad más cercana a $i$, $j$, se le suma a la longitud total la distancia entre ambas y nos "movemos" a esta última, repetiendo el procedimiento mientras haya ciudades que no han sido visitadas. Una vez se sale del \verb|while| se devuelve el vector que contiene el camino seguido y en la variable \verb|longitud|, al haber sido pasada por referencia, se habrá almacenado el peso total del camino.
+\item \verb|  vector<int> cierra_camino(vector<int> recorrido, double &longitud);| Añade al vector pasado como parámetro la ciudad origen, lo guardaa en otro vector que se devuelve y sumando esa distancia adicional a longitud. 
+
+\begin{lstlisting}
+vector<int> matriz_de_adyacencia::cierra_camino(vector<int> recorrido, double &longitud){
+  vector<int> f= recorrido;
+  int j= recorrido.back(), i= recorrido.front();
+
+  if(i > j)
+    longitud += m[j][i];
+  else
+    longitud += m[i][j];
+
+  f.push_back(i);
+  return f;
+}
+\end{lstlisting}
+
+\item \verb|vector<int> recorrido_optimo(double &longitud);| busca, de entre todos los recorridos posibles, el mínimo. Para ello usa el método \verb|min_path| y desde la ciudad 0 a la dimension-1 va calculando el camino que parte de ella y su peso, comparádolas de manera que se queda con el que tiene menor longitud.
+\begin{lstlisting}
+vector<int> matriz_de_adyacencia::recorrido_optimo(double &longitud_min){
+  double longitud;
+  longitud_min= LONG_MAX;
+  vector<int> actual, min;
+
+  for(unsigned int i= 0; i< m.size(); i++){
+    longitud= 0;
+    clear();
+    actual= min_path(i, longitud);
+    if(longitud< longitud_min){
+      min= actual;
+      longitud_min= longitud;
+    }
+  }
+  return min;
+}
+\end{lstlisting}
+
+ 
+
+\item \verb|vector<vector<int> > reparto_multiple(int i, double &longitud);| Reparte el recorrido entre varios electricistas.
+\begin{lstlisting}
+vector<vector<int> > matriz_de_adyacencia::reparto_multiple(int city, int n, double &longitud){
+  assert(n > 0);
+  assert(city >= 0 && city < ciudades.size());
+  clear();
+
+  int i;
+  double dist= 0;
+  vector<vector<int> > repartos;
+  repartos.resize(n);
+
+  for(i=0; i< repartos.size(); i++)
+    repartos[i].resize(1);
+
+  longitud= 0;
+  if(n == 1){
+    vector<int> r= min_path(city, longitud);
+    repartos[0].erase(repartos[0].begin()); //Para ajustar el resize a 1.
+
+    for(i= 0; i< r.size(); i++)
+      repartos[0].push_back(r[i]);
+  }else{
+    /*Todos los electricistas parten de la ciudad city, por lo que la primera
+    componente del vector que contiene el recorrido que hace cada uno sera city.*/
+    for(i= 0; i< n; i++)
+      repartos[i][0]=city;
+
+    //Como ya ha sido visitada ponemos su componente a true
+    visitadas[city]= true;
+    i= 0;
+
+    while(!recorrido_terminado()){
+      //Movemos a cada electricista de la ciudad en la que se encuentra a la mas cercana
+      if(i < n){
+        repartos[i].push_back(ciudad_mas_cercana(repartos[i].back(), dist));
+        visitadas[repartos[i].back()]=true;
+        longitud += dist;
+        i++;
+      }
+      else if(i == n)
+        i= 0;
+    }
+  }
+  return repartos;
+}
+\end{lstlisting}
+
+El algoritmo es sencillo: creamos un vector con un vector por electricista, éste segundo contendrá el recorrido que ha hecho cada uno, y como primera componente de todos ponemos la ciudad origen \verb|city|. Luego, mientras haya ciudades que no han sido visitadas se añade de uno en uno a cada vector \verb|repartos[i]| la ciudad más cercana a la ciudad $i-1$, la última que haya. Cuando $i$ sea igual al número de electricistas se resetea y pone a 0, para que cada electricista tenga un número equitativo de ciudades que recorre. Finalmente se devuelve la matriz con los repartos efectuados. 
+\end{itemize}
+\end{document}
