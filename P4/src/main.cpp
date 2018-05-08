@@ -33,13 +33,12 @@ int main(int argc, char **argv){
   max_conv=  m.max_nivel_conv(v);
   clock_gettime(CLOCK_REALTIME, &cgt2);
 
-  cout << "\nEl máximo nivel de conveniencia es: " << m.max_nivel_conv(v);
-  cout << "\nNúmero de soluciones calculadas: " << m.get_num_soluciones();
+  //cout << "\nEl máximo nivel de conveniencia es: " << max_conv;
   f= m.get_solucion();
-  cout << "\nPara ello los invitados han de estar sentados en el orden: ";
+  //cout << "\nPara ello los invitados han de estar sentados en el orden: ";
   for(int i= 0; i< f.size(); i++)
-    cout << f[i] << " ";
+    // cout << f[i] << " ";
 
   ncgt= (double)(cgt2.tv_sec - cgt1.tv_sec) + (double) ((cgt2.tv_nsec - cgt1.tv_nsec) / (1.e+9));
-  cout << "\nTiempo de ejecución: " << ncgt;
+  cout << "\n" << ncgt;
 }

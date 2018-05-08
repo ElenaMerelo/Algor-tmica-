@@ -10,7 +10,6 @@ class matriz_de_conveniencia{
 private:
   vector<vector<int> > m;
   vector<int> solucion;
-  int num_soluciones, max_conv, conv;
 
 public:
   //Crea una matriz n*n con enteros aleatorios y la diagonal principal rellena de ceros
@@ -18,7 +17,6 @@ public:
     int i, j;
     //Inicializamos la semilla para generar los números aleatorios
     srand(time(NULL));
-    num_soluciones= 0; max_conv= 0; conv= 0;
 
     m.resize(n);
 
@@ -33,10 +31,6 @@ public:
 
   vector<int> get_solucion(){
     return solucion;
-  }
-
-  int get_num_soluciones(){
-    return num_soluciones;
   }
 
   int conveniencia_total(vector<int> v){
@@ -56,7 +50,7 @@ public:
     return count(v.begin(), v.end(), x) == 1;
   }
 
-  vector<int> aux(vector<int> v, int n){
+  vector<int> complementario(vector<int> v, int n){
     vector<int> result;
     for(int i= 0; i< n; i++)
       if(!sentado(v, i))
@@ -65,14 +59,12 @@ public:
     return result;
   }
 
-  int max_nivel_conv(vector<int> &v){
-    vector<int> por_sentar= aux(v, m.size());
+  int max_nivel_conv(vector<int> v){
+    int max_conv= 0, conv= 0;
+    vector<int> por_sentar= complementario(v, m.size());
 
     for(int i= 0; i< por_sentar.size(); i++){
       v.push_back(por_sentar[i]);
-
-      if(v.size() == m.size())
-        num_soluciones++;
 
       conv= conveniencia_total(v);
 
