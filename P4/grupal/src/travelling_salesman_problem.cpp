@@ -18,6 +18,15 @@ void graph::fill_matrix(const vector<city> &v){
       m[i][j]= euclidean_distance(v[i], v[j]);
 }
 
+bool graph::finished(){
+  return count(visited.begin(), visited.end(), false) == 0;
+}
+
+void graph::clear(){
+  visited.clear();
+  visited.resize(m.size(), false);
+}
+
 //Creamos la matriz de adyacencia a partir del fichero pasado como argumento
 graph::graph(const char *file){
   int num_cities, n;
@@ -50,14 +59,7 @@ graph::graph(const char *file){
   f.close();
 }
 
-bool graph::finished(){
-  return count(visited.begin(), visited.end(), false) == 0;
-}
 
-void graph::clear(){
-  visited.clear();
-  visited.resize(m.size(), false);
-}
 
 void graph::show_matrix(){
   for(unsigned int i= 0; i< m.size(); i++){
@@ -123,6 +125,18 @@ vector<int> graph::min_path(int i, double &longitud){
   return r;
 }
 
+vector<int> graph::close_path(vector<int> recorrido, double &longitud){
+  vector<int> f= recorrido;
+  int j= recorrido.back(), i= recorrido.front();
+
+  if(i > j)
+  longitud += m[j][i];
+  else
+  longitud += m[i][j];
+
+  f.push_back(i);
+  return f;
+}
 
 double graph::lower_bound(vector<int> &best_min_path){
   double longitud, longitud_min= LONG_MAX;
@@ -143,18 +157,6 @@ double graph::lower_bound(vector<int> &best_min_path){
 }
 
 
-vector<int> graph::close_path(vector<int> recorrido, double &longitud){
-  vector<int> f= recorrido;
-  int j= recorrido.back(), i= recorrido.front();
-
-  if(i > j)
-    longitud += m[j][i];
-  else
-    longitud += m[i][j];
-
-  f.push_back(i);
-  return f;
-}
 
 
 
