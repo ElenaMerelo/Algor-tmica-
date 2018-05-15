@@ -47,10 +47,7 @@ public:
   vector<int> close_path(vector<int> recorrido, double &longitud);
 
   //Obtiene el camino mínimo de todos los posibles, comparando entre todos los recorridos que hay (tantos como ciudades)
-  vector<int> best_min_path(double &longitud);
-
-  //Reparte el recorrido entre varios electricistas
-  vector<vector<int> > reparto_multiple(int origen, int n_electricians, double &longitud);
+  double lower_bound(vector <int> &best_min_path);
 
 };
 

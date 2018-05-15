@@ -124,60 +124,24 @@ vector<int> graph::min_path(int i, double &longitud){
 }
 
 
-vector<int> graph::best_min_path(double &longitud_min){
-  double longitud;
-  longitud_min= LONG_MAX;
-  vector<int> actual, min;
+double graph::lower_bound(vector<int> &best_min_path){
+  double longitud, longitud_min= LONG_MAX;
+  vector<int> actual;
+
+  best_min_path.clear();
 
   for(unsigned int i= 0; i< m.size(); i++){
     longitud= 0;
     clear();
     actual= min_path(i, longitud);
     if(longitud< longitud_min){
-      min= actual;
+      best_min_path= actual;
       longitud_min= longitud;
     }
   }
-  return min;
+  return longitud_min;
 }
 
-vector<vector<int> > graph::reparto_multiple(int city, int n, double &longitud){
-  assert(n > 0);
-  assert(city >= 0 && city < cities.size());
-  clear();
-
-  int i;
-  double dist= 0;
-  vector<vector<int> > repartos;
-  repartos.resize(n);
-
-  for(i=0; i< repartos.size(); i++)
-    repartos[i].resize(1);
-
-  longitud= 0;
-
-  /*Todos los electricistas parten de la ciudad city, por lo que la primera
-  componente del vector que contiene el recorrido que hace cada uno será city.*/
-  for(i= 0; i< n; i++)
-    repartos[i][0]=city;
-
-  //Como ya ha sido visitada ponemos su componente a true
-  visited[city]= true;
-  i= 0;
-
-  while(!finished()){
-    //Movemos a cada electricista de la ciudad en la que se encuentra a la más cercana
-    if(i < n){
-      repartos[i].push_back(nearest_city(repartos[i].back(), dist));
-      visited[repartos[i].back()]=true;
-      longitud += dist;
-      i++;
-    }
-    else if(i == n)
-      i= 0;
-    }
-  return repartos;
-}
 
 vector<int> graph::close_path(vector<int> recorrido, double &longitud){
   vector<int> f= recorrido;
@@ -191,7 +155,6 @@ vector<int> graph::close_path(vector<int> recorrido, double &longitud){
   f.push_back(i);
   return f;
 }
-
 
 
 
