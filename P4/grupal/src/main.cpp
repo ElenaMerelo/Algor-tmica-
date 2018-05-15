@@ -27,7 +27,7 @@ int main(int argc, char **argv){
   cout << "\nCierra camino\n";
   m.show_path(cerrado, longitud);
 
-  double cota_inferior= m.lower_bound(camino);
+  double cota_inferior= m.lower_bound();
   cout << "\nCota inferior";
   cout << "\nRecorrido óptimo\n";
   m.show_path(camino, cota_inferior);

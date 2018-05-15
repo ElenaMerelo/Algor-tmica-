@@ -19,7 +19,7 @@ void graph::fill_matrix(const vector<city> &v){
 }
 
 bool graph::finished(){
-  return count(visited.begin(), visited.end(), false) == 0;
+  return nodos_vivos.empty();
 }
 
 void graph::clear(){
@@ -53,6 +53,7 @@ graph::graph(const char *file){
     f >> x;
     f >> y;
     cities.push_back(make_pair(x, y));
+    nodos_vivos.push_back(i);
   }
   visited.resize(num_cities, false);
   fill_matrix(cities);
@@ -82,17 +83,16 @@ int graph::nearest_city(int i, double &min_dist){
 
   min_dist= 0;
 
-  for(j= 0; j< n; j++){
+  for(j= 0; j< nodos_vivos.size(); j++){
     //Si estamos en el triángulo superior de la matriz de adyacencia
-    if(!visited[j]){  //si no forma ciclo
-      if( i > j)
-      posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
+    if( i > nodos[j])
+    posibilidades.insert(make_pair(m[j][i], j));  //insertamos la distancia entre las ciudades y a qué ciudad va
 
-      //Si no está en el triángulo superior obtenemos la coordenada simétrica
-      else if( i< j)
-      posibilidades.insert(make_pair(m[i][j], j));
+    //Si no está en el triángulo superior obtenemos la coordenada simétrica
+    else if( i< nodos[j])
+    posibilidades.insert(make_pair(m[i][j], j));
 
-      //Si i == j no se hace nada.
+    //Si i == j no se hace nada.
     }
   }
 
@@ -103,11 +103,14 @@ int graph::nearest_city(int i, double &min_dist){
 }
 
 vector<int> graph::min_path(int i, double &longitud){
-  int n= cities.size(), j;
+  int j;
   longitud= 0;
 
   double min_dist;
   vector<int> r;
+
+  for(int i= 0; i< recorridas.size(); i++)
+    visited[recorridas[i]]= true;
 
   //Mientras haya ciudades por recorrer
   while(!finished()){
@@ -138,32 +141,39 @@ vector<int> graph::close_path(vector<int> recorrido, double &longitud){
   return f;
 }
 
-double graph::lower_bound(vector<int> &best_min_path){
-  double longitud, longitud_min= LONG_MAX;
+void graph::best_min_path(int node, double &l){
+  double longitud_min= LONG_MAX;
   vector<int> actual;
+  int next_city, position;
+  recorridas.push_back(node);
+  vector<int>::iterator it= find(nodos_vivos.begin(), nodos_vivos.end(), node);
+  nodos_vivos.erase(it);
 
-  //best_min_path.clear();
+  while(!nodos_vivos.empty()){
+    for(unsigned int i= 0; i< nodos_vivos.size(); i++){
+      longitud= 0;
+      //Hallamos el camino mínimo que comienza en el nodo i y pasa por las ciudades que no han sido recorridas
+      actual= min_path(nodos_vivos[i], longitud);
+      if(longitud< longitud_min){
+        next_city= actual.front();
+        position= i;
+        longitud_min= longitud;
+      }
+    }
+    recorridas.push_back(next_city);
+    nodos_vivos.erase(position);
 
-  for(unsigned int i= 0; i< m.size(); i++){
-    longitud= 0;
-    clear();
-    actual= min_path(i, longitud);
-    if(longitud< longitud_min){
-      best_min_path= actual;
-      longitud_min= longitud;
+    l += longitud_min;
+    best_min_path(next_city, l);
     }
   }
-  return longitud_min;
-}
 
-/*bool graph::valid_city(int start, int c){
-  vector<int> path= min_path()
-}*/
 
-double graph::min_weight(int i, int c2){
-  assert(i >= 0 && i< cities.size() && c2 >= 0 && c2< cities.size());
+
+double graph::min_weight(vector<int> nodos_vivos){
+  int i= nodos_vivos.front(), c2= nodos_vivos.back();
   clear();
-  visited[c2]= true;
+  recorridas.push_back(c2);
 
   double longitud;
   vector<int> path= min_path(i, longitud);
@@ -172,10 +182,13 @@ double graph::min_weight(int i, int c2){
 
   path.push_back(c2);
   longitud += j < c2 ? m[j][c2] : m[c2][j];
+
+  return longitud;
 }
 
+vector<int> graph::best_min_path(int i, double &longitud){
 
-
+}
 
 
 
