@@ -142,7 +142,7 @@ double graph::lower_bound(vector<int> &best_min_path){
   double longitud, longitud_min= LONG_MAX;
   vector<int> actual;
 
-  best_min_path.clear();
+  //best_min_path.clear();
 
   for(unsigned int i= 0; i< m.size(); i++){
     longitud= 0;
@@ -154,6 +154,24 @@ double graph::lower_bound(vector<int> &best_min_path){
     }
   }
   return longitud_min;
+}
+
+/*bool graph::valid_city(int start, int c){
+  vector<int> path= min_path()
+}*/
+
+double graph::min_weight(int i, int c2){
+  assert(i >= 0 && i< cities.size() && c2 >= 0 && c2< cities.size());
+  clear();
+  visited[c2]= true;
+
+  double longitud;
+  vector<int> path= min_path(i, longitud);
+  int j= path.back();
+
+
+  path.push_back(c2);
+  longitud += j < c2 ? m[j][c2] : m[c2][j];
 }
 
 

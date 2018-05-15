@@ -32,6 +32,11 @@ int main(int argc, char **argv){
   cout << "\nRecorrido óptimo\n";
   m.show_path(camino, cota_inferior);
 
+  int c1, c2;
+  cout << "\nMin weight";
+  cout << "\nIntroduzca ciudad desde la que quiere empezar y en cuál quiere acabar: ";
+  cin >> c1 >> c2;
+  cout << "\nEl recorrido mínimo de una a otra es: " << m.min_weight(c1, c2);
 
 }
 

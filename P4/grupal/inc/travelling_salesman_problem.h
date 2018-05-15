@@ -40,7 +40,7 @@ public:
   //Busca la ciudad más cercana a una dada
   int nearest_city(int city, double &min_dist);
 
-  //Obtiene el camino mínimo desde la fila i columna j de la matriz
+  //Obtiene cuál es el camino mínimo que hay que hacer para recorrer todas las ciudades empezando por i
   vector<int> min_path(int i, double &longitud);
 
   //Añade al recorrido total la vuelta al punto de partida, con el peso adicional que eso conlleve
@@ -49,6 +49,11 @@ public:
   //Obtiene el camino mínimo de todos los posibles, comparando entre todos los recorridos que hay (tantos como ciudades)
   double lower_bound(vector <int> &best_min_path);
 
+  //Comprueba si el camino desde la ciudad c hasta el final es menor que la cota inferior
+//  bool valid_city(int start, int c);
+
+  //Devuelve el peso del menor recorrido que hay de la ciudad c1 en la que se comienza hasta la final o c2
+  double min_weight(int c1, int c2);
 };
 
 #endif
