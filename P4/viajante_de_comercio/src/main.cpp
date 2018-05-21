@@ -31,6 +31,12 @@ int main(int argc, char **argv){
   cout << "\nRecorrido óptimo usando greedy\n";
   m.show_path(min, longitud);
 
+  int nodo;
+  cout << "\nBranch and bound. Introduzca nodo de comienzo: ";
+  cin >> nodo;
+  vector<int> bb;
+  bb.push_back(nodo);
+  m.branch_and_bound(bb);
 
 }
 

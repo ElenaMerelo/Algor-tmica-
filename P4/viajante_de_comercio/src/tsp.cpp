@@ -199,10 +199,31 @@ double matriz_de_adyacencia::coste_posible(vector<int> nodos_recorridos){
   return coste_total;
 }
 
-/*
-vector<int> matriz_de_adyacencia::branch_and_bound(int nodo){
+vector<nodo> matriz_de_adyacencia::nivel_siguiente(vector<int> nodos){
+  vector<nodo> v;
+  vector<int> w= nodos, sup= vector_suplementario(w);
 
-}*/
+  for(int j= 0; j< sup.size(); j++){
+    w.push_back(sup[j]);
+    v.push_back(make_pair(coste_posible(w), w));
+    w.pop_back();
+  }
+
+  return v;
+}
+
+
+/*
+vector<int> matriz_de_adyacencia::branch_and_bound(vector<int> &recorrido){
+  vector<nodo> nodos= nivel_siguiente(recorrido);
+  set<nodo> posibilidades(nodos.begin(), nodos.end());
+
+  //El set los coloca de menor coste posible a mayor, luego el mejor nodo para expandir es el primer elemento del mismo
+
+  branch_and_bound()
+
+
+*/
 
 
 

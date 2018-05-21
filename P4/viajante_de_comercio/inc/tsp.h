@@ -14,6 +14,7 @@
 using namespace std;
 
 typedef pair<double, double> ciudad;
+typedef pair <double, vector<int> > nodo;
 
 class matriz_de_adyacencia{
 private:
@@ -58,8 +59,11 @@ public:
   //Obtiene el posible peso de recorrer
   double coste_posible(vector<int> nodos_recorridos);
 
-  //Obtiene el camino óptimo empleando el método de ramifiación y poda 
-  vector<int> branch_and_bound(int nodo);
+  //Desarrolla el primer nivel del árbol comenzando por el nodo i
+  vector<nodo> nivel_siguiente(vector<int> nodos_recorridos);
+
+  //Obtiene el camino óptimo empleando el método de ramifiación y poda
+  void branch_and_bound(vector<int> &recorrido);
 };
 
 #endif
